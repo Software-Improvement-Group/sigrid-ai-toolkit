@@ -1,0 +1,19 @@
+{
+  "name": "sigrid-ai-toolkit",
+  "owner": {
+    "name": "Software Improvement Group"
+  },
+  "metadata": {
+    "description": "Sigrid integration plugins for Claude Code",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "sigrid",
+      "source": "./",
+      "version": "0.1.0",
+      "keywords": ["sigrid", "code-quality", "maintainability", "security"],
+      "category": "code-quality"
+    }
+  ]
+}

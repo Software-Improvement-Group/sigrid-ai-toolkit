@@ -1,0 +1,27 @@
+{
+  "name": "sigrid",
+  "description": "Sigrid integration for AI-assisted development",
+  "author": {
+    "name": "Software Improvement Group"
+  },
+  "homepage": "https://docs.sigrid-says.com/integrations/integration-sigrid-mcp.html",
+  "repository": "https://github.com/Software-Improvement-Group/sigrid-ai-toolkit",
+  "license": "Apache-2.0",
+  "userConfig": {
+    "sigrid_token": {
+      "title": "Sigrid Token",
+      "description": "Sigrid API token (obtain from sigrid-says.com)",
+      "sensitive": true,
+      "type": "string"
+    }
+  },
+  "mcpServers": {
+    "sigrid": {
+      "type": "http",
+      "url": "https://sigrid-says.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${user_config.sigrid_token}"
+      }
+    }
+  }
+}
