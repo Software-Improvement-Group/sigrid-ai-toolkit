@@ -13,16 +13,21 @@ Sigrid MCP integrations can be used to leverage Sigrid's capabilities from AI Co
 - A Sigrid API token ([sigrid-says.com](https://sigrid-says.com))
 
 ## Install
+   
+1. Install the Sigrid plugin marketplace
+    ```
+    /plugin marketplace add git@github.com:Software-Improvement-Group/sigrid-ai-toolkit.git
+    ```
 
-```bash
-claude
-/plugin marketplace add git@github.com:Software-Improvement-Group/sigrid-ai-toolkit.git
-/plugin install sigrid@sigrid-ai-toolkit
-```
+2. Install the Sigrid plugin
+    ```
+    /plugin install sigrid@sigrid-ai-toolkit
+    ```
+    You'll be prompted for your Sigrid API token on first use. The token is stored securely in your system keychain.
 
-You'll be prompted for your Sigrid API token on first use. The token is stored securely in your system keychain.
+3. Enable auto-update (recommended)
 
-### Enable auto-update
+### How to: Enable auto-update
 
 We regularly add improvements and new features. To ensure you get these updates automatically:
 
@@ -43,3 +48,7 @@ This may happen due to a bug in at least Claude Code 2.1.84. Enter the token as 
 - Navigate to `Configure options`
 - Enter your Sigrid token and press enter
 - `/reload-plugins` for changes to take effect
+
+## Usage
+
+See the [Sigrid MCP documentation](https://docs.sigrid-says.com/integrations/integration-sigrid-mcp.html#using-sigrid-quality-gates-with-ai-coding-agents) for usage instructions.
