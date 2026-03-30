@@ -27,7 +27,7 @@ PROPERTIES = [
     "componentEntanglement",
 ]
 
-SEVERITIES = ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+SEVERITIES = ["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]
 
 
 def api_get(path, token):
