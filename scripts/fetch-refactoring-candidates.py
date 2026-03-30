@@ -27,16 +27,6 @@ PROPERTIES = [
     "componentEntanglement",
 ]
 
-RATING_FIELDS = {
-    "duplication": "Duplication",
-    "unitSize": "Unit Size",
-    "unitComplexity": "Unit Complexity",
-    "unitInterfacing": "Unit Interfacing",
-    "moduleCoupling": "Module Coupling",
-    "componentIndependence": "Component Independence",
-    "componentEntanglement": "Component Entanglement",
-}
-
 SEVERITIES = ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
 
 
@@ -54,18 +44,6 @@ def api_get(path, token):
         except Exception:
             pass
         return {"error": e.code, "message": body, "path": path}
-
-
-def interpret_rating(value):
-    if value is None:
-        return "N/A"
-    if value >= 4.0:
-        return "Good"
-    if value >= 3.0:
-        return "Adequate"
-    if value >= 2.0:
-        return "Below average"
-    return "Needs attention"
 
 
 def fetch_candidates(token, customer, system, prop, count):
@@ -109,37 +87,6 @@ def main():
         print("Set it with: export SIGRID_TOKEN=<your-token>", file=sys.stderr)
         sys.exit(1)
 
-    # Fetch maintainability ratings
-    maint_data = api_get(f"maintainability/{args.customer}/{args.system}", token)
-    if "error" in maint_data:
-        code = maint_data["error"]
-        if code in (401, 403):
-            print("Error: Authentication failed. Check your SIGRID_TOKEN.", file=sys.stderr)
-        elif code == 404:
-            print(f"Error: System not found. Verify customer='{args.customer}' and system='{args.system}'.", file=sys.stderr)
-        else:
-            print(f"Error: HTTP {code} fetching maintainability ratings.", file=sys.stderr)
-        sys.exit(1)
-
-    # Extract latest ratings
-    systems = maint_data.get("systems", [])
-    if not systems:
-        print("Error: No system data returned from Sigrid.", file=sys.stderr)
-        sys.exit(1)
-
-    system_data = systems[0]
-    all_ratings = system_data.get("allRatings", [])
-    latest = all_ratings[-1] if all_ratings else {}
-
-    ratings = {}
-    for field, label in RATING_FIELDS.items():
-        value = latest.get(field)
-        ratings[field] = {
-            "label": label,
-            "value": round(value, 2) if value is not None else None,
-            "interpretation": interpret_rating(value),
-        }
-
     # Fetch candidates for all properties in parallel
     candidates_by_prop = {}
     with ThreadPoolExecutor(max_workers=7) as executor:
@@ -155,8 +102,6 @@ def main():
     output = {
         "system": args.system,
         "customer": args.customer,
-        "maintainability": round(system_data.get("maintainability", 0), 2),
-        "ratings": ratings,
         "summary": build_summary(candidates_by_prop),
         "candidates": candidates_by_prop,
     }

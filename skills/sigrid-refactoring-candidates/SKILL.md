@@ -68,8 +68,6 @@ The script outputs a single JSON object with all data. If it exits with an error
 
 The JSON output contains:
 
-- `maintainability` — overall score (0–5.5)
-- `ratings` — per-property object with `value`, `label`, and `interpretation`
 - `summary` — per-property candidate counts by severity (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`, `total`)
 - `candidates` — per-property arrays of refactoring candidate objects
 
@@ -85,27 +83,7 @@ Candidate fields vary by property:
 
 ## Presentation
 
-### 1. Quality overview
-
-Start with a summary table using the `ratings` object:
-
-```
-## Maintainability Overview for {system}
-
-Overall rating: {maintainability} / 5.0
-
-| Property                 | Rating | Interpretation     |
-| ------------------------ | ------ | ------------------ |
-| Duplication              | {x.x}  | {interpretation}   |
-| Unit Size                | {x.x}  | {interpretation}   |
-| Unit Complexity          | {x.x}  | {interpretation}   |
-| Unit Interfacing         | {x.x}  | {interpretation}   |
-| Module Coupling          | {x.x}  | {interpretation}   |
-| Component Independence   | {x.x}  | {interpretation}   |
-| Component Entanglement   | {x.x}  | {interpretation}   |
-```
-
-### 2. Candidate summary
+### 1. Candidate summary
 
 Render the `summary` object as a table:
 
@@ -116,7 +94,7 @@ Render the `summary` object as a table:
 | ...                      | ...      | ...  | ...    | ... | ...   |
 ```
 
-### 3. Per-property candidate listings
+### 2. Per-property candidate listings
 
 For each property with candidates, list them sorted by severity (CRITICAL first). For each candidate:
 
@@ -141,11 +119,11 @@ For each property with candidates, list them sorted by severity (CRITICAL first)
 **Component Entanglement:**
 - `[{severity}] {componentName} — {componentEntanglementType}` — {filePath}, lines {startLine}–{endLine}
 
-### 4. Prioritized action items
+### 3. Prioritized action items
 
 End with a short list of top recommended actions, prioritized by:
 1. Severity (CRITICAL > HIGH > MEDIUM > LOW)
-2. Properties with the lowest ratings
+2. Properties with the most candidates
 3. Quick wins — candidates that are likely easy to fix
 
 ## Error handling
