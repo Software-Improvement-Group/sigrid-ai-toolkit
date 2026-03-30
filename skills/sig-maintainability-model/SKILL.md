@@ -20,7 +20,7 @@ build/deployment scripts.
 
 SIG uses a 0.5-to-5.5 star rating calibrated against a benchmark of 30,000+
 systems. 3 stars is market average; 4 stars is the target for new development.
-The benchmark recalibrates annually, a system that stays unchanged will
+The benchmark recalibrates annually; a system that stays unchanged will
 gradually drift downward.
 
 ### Measurement Levels
