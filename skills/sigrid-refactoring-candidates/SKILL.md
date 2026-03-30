@@ -23,29 +23,28 @@ https://sigrid-says.com/rest/analysis-results/api/v1
 
 ## Workflow
 
-### Step 0: Verify prerequisites (MUST run first)
+### Step 0: Verify token availability (MUST run first)
 
 Run this command EXACTLY:
 
 ```bash
-echo "SIGRID_CI_TOKEN: $([ -n "${SIGRID_CI_TOKEN:-}" ] && echo "set (${#SIGRID_CI_TOKEN} chars)" || echo "NOT SET")"
-echo "SIGRID_CUSTOMER: ${SIGRID_CUSTOMER:-NOT SET}"
-echo "SIGRID_SYSTEM:   ${SIGRID_SYSTEM:-NOT SET}"
+if [ -n "$SIGRID_CI_TOKEN" ]; then
+  echo "SIGRID_CI_TOKEN is set (${#SIGRID_CI_TOKEN} characters)"
+else
+  echo "SIGRID_CI_TOKEN is NOT set"
+fi
 ```
 
-If any variable is NOT SET, stop and tell the user to set the missing variables in their terminal:
+- If NOT set: stop and tell the user to set it via their terminal (`export SIGRID_CI_TOKEN=...`). Remind them to never paste the token in the chat. They can obtain a token from their Sigrid account settings at https://sigrid-says.com.
+- If set: proceed to Step 1.
 
-```
-export SIGRID_CI_TOKEN=<your-token>
-export SIGRID_CUSTOMER=<account-name>
-export SIGRID_SYSTEM=<system-name>
-```
+The `check-sigrid-prerequisites` hook will also block any Sigrid API call if the token is missing.
 
-Remind them to never paste the token in the chat. They can obtain a token from their Sigrid account settings at https://sigrid-says.com.
+### Step 1: Get customer and system names
 
-Do NOT proceed until all three variables are confirmed set. The `check-sigrid-prerequisites` hook will also block any Sigrid API call if these are missing.
+Ask the user for their **customer** (Sigrid account name) and **system** name. These are required for all API calls.
 
-### Step 1: Confirm result scope with the user (MANDATORY)
+### Step 2: Confirm result scope with the user (MANDATORY)
 
 Before fetching any data, you MUST ask the user the following question and wait for their answer:
 
@@ -60,14 +59,14 @@ Store their choice:
 - If the user chose "all": do NOT include the `count` query parameter in API calls.
 - If the user chose "top 10": include `count=10` in every refactoring candidates API call.
 
-### Step 2: Fetch maintainability ratings
+### Step 3: Fetch maintainability ratings
 
 This provides the quality context for interpreting refactoring candidates.
 
 ```bash
 curl -s --fail-with-body \
   -H "Authorization: Bearer $SIGRID_CI_TOKEN" \
-  "https://sigrid-says.com/rest/analysis-results/api/v1/maintainability/$SIGRID_CUSTOMER/$SIGRID_SYSTEM"
+  "https://sigrid-says.com/rest/analysis-results/api/v1/maintainability/{customer}/{system}"
 ```
 
 From the response, extract the **latest entry** in `allRatings` and record the rating for each property:
@@ -84,14 +83,14 @@ From the response, extract the **latest entry** in `allRatings` and record the r
 
 Also record the overall `maintainability` score.
 
-### Step 3: Fetch refactoring candidates for all properties
+### Step 4: Fetch refactoring candidates for all properties
 
 For **each** of the seven properties, make a separate API call:
 
 ```bash
 curl -s --fail-with-body \
   -H "Authorization: Bearer $SIGRID_CI_TOKEN" \
-  "https://sigrid-says.com/rest/analysis-results/api/v1/refactoring-candidates/$SIGRID_CUSTOMER/$SIGRID_SYSTEM/{property}?count={n}"
+  "https://sigrid-says.com/rest/analysis-results/api/v1/refactoring-candidates/{customer}/{system}/{property}?count={n}"
 ```
 
 Replace `{property}` with each of these values:
@@ -139,7 +138,7 @@ Each response contains a `refactoringCandidates` array. Fields vary by property:
 Start with a summary table of the system's maintainability profile:
 
 ```
-## Maintainability Overview for $SIGRID_SYSTEM
+## Maintainability Overview for {system}
 
 Overall rating: {maintainability} / 5.0
 
