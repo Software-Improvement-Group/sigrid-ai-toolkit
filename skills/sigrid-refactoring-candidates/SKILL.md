@@ -68,7 +68,7 @@ The script outputs a single JSON object with all data. If it exits with an error
 
 The JSON output contains:
 
-- `summary` — per-property candidate counts by severity (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`, `total`)
+- `summary` — per-property candidate counts by severity (`VERY_HIGH`, `HIGH`, `MEDIUM`, `LOW`, `total`)
 - `candidates` — per-property arrays of refactoring candidate objects
 
 Candidate fields vary by property:
@@ -81,22 +81,30 @@ Candidate fields vary by property:
 
 **Component Entanglement:** `componentEntanglementType` (`CYCLIC_DEPENDENCY`, `INDIRECT_CYCLIC_DEPENDENCY`, `LAYER_BYPASSING_DEPENDENCY`, `COMMUNICATION_DENSITY`)
 
-## Presentation
+## Output
 
-### 1. Candidate summary
+You MUST produce two outputs: a file written to the repository and a short message shown to the user. Follow this order exactly.
 
-Render the `summary` object as a table:
+### 1. Write FULL_ANALYSIS_RESULTS.md to the repository root
+
+Use the Write tool to create `FULL_ANALYSIS_RESULTS.md` in the repository root. This file contains the **complete analysis** with all sections below.
+
+#### Section: Candidate summary table
 
 ```
-## Refactoring Candidates Summary
+# Sigrid Refactoring Candidates — Full Analysis
 
-| Property                 | Critical | High | Medium | Low | Total |
-| ...                      | ...      | ...  | ...    | ... | ...   |
+**System:** {system} | **Customer:** {customer} | **Date:** {today}
+
+## Summary
+
+| Property                 | Very High | High | Medium | Low | Total |
+| ...                      | ...       | ...  | ...    | ... | ...   |
 ```
 
-### 2. Per-property candidate listings
+#### Section: Per-property candidate listings
 
-For each property with candidates, list them sorted by severity (CRITICAL first). For each candidate:
+For each property with candidates, list them sorted by severity (VERY_HIGH first). For each candidate:
 
 **Duplication:**
 - `[{severity}] Duplication in {filePath}` — lines {startLine}–{endLine}, {loc} duplicated lines, duplicated with {locations}, same file: {yes/no}
@@ -119,12 +127,16 @@ For each property with candidates, list them sorted by severity (CRITICAL first)
 **Component Entanglement:**
 - `[{severity}] {componentName} — {componentEntanglementType}` — {filePath}, lines {startLine}–{endLine}
 
-### 3. Prioritized action items
+#### Section: Prioritized action items
 
-End with a short list of top recommended actions, prioritized by:
-1. Severity (CRITICAL > HIGH > MEDIUM > LOW)
+End the file with a prioritized list of recommended actions, ordered by:
+1. Severity (VERY_HIGH > HIGH > MEDIUM > LOW)
 2. Properties with the most candidates
 3. Quick wins — candidates that are likely easy to fix
+
+### 2. Show ONLY the prioritized list to the user
+
+After writing the file, show the user **only** the prioritized action items list from the file. Do NOT repeat the summary table or per-property listings in the chat. Instead, tell the user that the full analysis has been written to `FULL_ANALYSIS_RESULTS.md`.
 
 ## Error handling
 
