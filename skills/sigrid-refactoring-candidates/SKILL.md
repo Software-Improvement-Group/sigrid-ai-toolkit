@@ -4,22 +4,13 @@ description: List refactoring candidates across all maintainability properties f
 
 # Sigrid Refactoring Candidates
 
-You are helping the user retrieve and review refactoring candidates from Sigrid for a given system. You will fetch candidates across all maintainability properties and present them in an organized, severity-prioritized format.
+You are helping the user retrieve and review refactoring candidates from Sigrid for a given system. A Python script handles all API calls and aggregation. Your job is to gather the inputs, run the script, and present the results.
 
 ## Token security rules (MANDATORY)
 
 1. NEVER print, echo, or log the token value
 2. NEVER include the token in text output to the user
-3. Only use the token in the `Authorization` header for requests to `sigrid-says.com`
-4. Use `--fail-with-body` on all curl calls to prevent request headers from leaking on error
-5. Use `-s` (silent) on all curl calls to suppress progress output
-6. Validate token existence without exposing its value
-
-## API base URL
-
-```
-https://sigrid-says.com/rest/analysis-results/api/v1
-```
+3. Validate token existence without exposing its value
 
 ## Workflow
 
@@ -38,8 +29,6 @@ fi
 - If NOT set: stop and tell the user to set it via their terminal (`export SIGRID_CI_TOKEN=...`). Remind them to never paste the token in the chat. They can obtain a token from their Sigrid account settings at https://sigrid-says.com.
 - If set: proceed to Step 1.
 
-The `check-sigrid-prerequisites` hook will also block any Sigrid API call if the token is missing.
-
 ### Step 1: Get customer and system names
 
 Ask the user for their **customer** (Sigrid account name) and **system** name. These are required for all API calls.
@@ -55,87 +44,46 @@ Before fetching any data, you MUST ask the user the following question and wait 
 
 **Do NOT proceed until the user has explicitly chosen one of these options.** This is a hard requirement.
 
-Store their choice:
-- If the user chose "all": do NOT include the `count` query parameter in API calls.
-- If the user chose "top 10": include `count=10` in every refactoring candidates API call.
+### Step 3: Run the fetch script
 
-### Step 3: Fetch maintainability ratings
-
-This provides the quality context for interpreting refactoring candidates.
+Run the Python script with the values collected in Steps 1 and 2:
 
 ```bash
-curl -s --fail-with-body \
-  -H "Authorization: Bearer $SIGRID_CI_TOKEN" \
-  "https://sigrid-says.com/rest/analysis-results/api/v1/maintainability/{customer}/{system}"
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/fetch-refactoring-candidates.py" {customer} {system}
 ```
 
-From the response, extract the **latest entry** in `allRatings` and record the rating for each property:
-
-| Property                 | API field                |
-| ------------------------ | ------------------------ |
-| Duplication              | `duplication`            |
-| Unit Size                | `unitSize`               |
-| Unit Complexity          | `unitComplexity`         |
-| Unit Interfacing         | `unitInterfacing`        |
-| Module Coupling          | `moduleCoupling`         |
-| Component Independence   | `componentIndependence`  |
-| Component Entanglement   | `componentEntanglement`  |
-
-Also record the overall `maintainability` score.
-
-### Step 4: Fetch refactoring candidates for all properties
-
-For **each** of the seven properties, make a separate API call:
+If the user chose top-10, add `--count 10`:
 
 ```bash
-curl -s --fail-with-body \
-  -H "Authorization: Bearer $SIGRID_CI_TOKEN" \
-  "https://sigrid-says.com/rest/analysis-results/api/v1/refactoring-candidates/{customer}/{system}/{property}?count={n}"
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/fetch-refactoring-candidates.py" {customer} {system} --count 10
 ```
 
-Replace `{property}` with each of these values:
-- `duplication`
-- `unitSize`
-- `unitComplexity`
-- `unitInterfacing`
-- `moduleCoupling`
-- `componentIndependence`
-- `componentEntanglement`
+The script outputs a single JSON object with all data. If it exits with an error, relay the stderr message to the user and stop.
 
-Only include `?count=10` if the user chose the top-10 option. Omit the parameter entirely for "all candidates".
+### Script output structure
 
-You may run these curl calls in parallel to save time.
+The JSON output contains:
 
-#### Response structure
+- `maintainability` — overall score (0–5.5)
+- `ratings` — per-property object with `value`, `label`, and `interpretation`
+- `summary` — per-property candidate counts by severity (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`, `total`)
+- `candidates` — per-property arrays of refactoring candidate objects
 
-Each response contains a `refactoringCandidates` array. Fields vary by property:
+Candidate fields vary by property:
 
-**Common fields (all properties):**
-- `severity` — `CRITICAL`, `HIGH`, `MEDIUM`, or `LOW`
-- `filePath` — relative file path
-- `startLine`, `endLine` — line range of the finding
-- `technology` — programming language
-- `componentName` — component containing the finding
+**Common fields:** `severity`, `filePath`, `startLine`, `endLine`, `technology`, `componentName`
 
-**Duplication-specific fields:**
-- `loc` — number of duplicated lines
-- `sameFile` — whether both fragments are in the same file
-- `sameComponent` — whether both fragments are in the same component
-- `locations` — array of `{filePath, startLine, endLine}` for each duplicated fragment
+**Duplication:** `loc`, `sameFile`, `sameComponent`, `locations` (array of `{filePath, startLine, endLine}`)
 
-**Unit-level fields (unitSize, unitComplexity, unitInterfacing):**
-- `unitName` — name of the function/method
-- `mcCabe` — McCabe cyclomatic complexity (unitComplexity)
-- `parameters` — number of parameters (unitInterfacing)
+**Unit-level (unitSize, unitComplexity, unitInterfacing):** `unitName`, `mcCabe`, `parameters`
 
-**Component Entanglement fields:**
-- `componentEntanglementType` — one of: `CYCLIC_DEPENDENCY`, `INDIRECT_CYCLIC_DEPENDENCY`, `LAYER_BYPASSING_DEPENDENCY`, `COMMUNICATION_DENSITY`
+**Component Entanglement:** `componentEntanglementType` (`CYCLIC_DEPENDENCY`, `INDIRECT_CYCLIC_DEPENDENCY`, `LAYER_BYPASSING_DEPENDENCY`, `COMMUNICATION_DENSITY`)
 
 ## Presentation
 
 ### 1. Quality overview
 
-Start with a summary table of the system's maintainability profile:
+Start with a summary table using the `ratings` object:
 
 ```
 ## Maintainability Overview for {system}
@@ -153,15 +101,9 @@ Overall rating: {maintainability} / 5.0
 | Component Entanglement   | {x.x}  | {interpretation}   |
 ```
 
-Use these interpretation ranges:
-- 4.0+ = Good
-- 3.0–3.9 = Adequate
-- 2.0–2.9 = Below average
-- < 2.0 = Needs attention
-
 ### 2. Candidate summary
 
-Show a count of candidates found per property and severity:
+Render the `summary` object as a table:
 
 ```
 ## Refactoring Candidates Summary
@@ -172,71 +114,40 @@ Show a count of candidates found per property and severity:
 
 ### 3. Per-property candidate listings
 
-For each property that has candidates, list them sorted by severity (CRITICAL first, then HIGH, MEDIUM, LOW). For each candidate, show:
+For each property with candidates, list them sorted by severity (CRITICAL first). For each candidate:
 
-**Duplication candidates:**
-```
-### [{severity}] Duplication in {filePath}
-- Lines {startLine}–{endLine} ({loc} duplicated lines)
-- Duplicated with: {other locations from the locations array}
-- Same file: {yes/no} | Same component: {yes/no}
-```
+**Duplication:**
+- `[{severity}] Duplication in {filePath}` — lines {startLine}–{endLine}, {loc} duplicated lines, duplicated with {locations}, same file: {yes/no}
 
-**Unit Size candidates:**
-```
-### [{severity}] {unitName} in {filePath}
-- Lines {startLine}–{endLine}
-- Unit is too large — consider extracting logical sections into separate functions
-```
+**Unit Size:**
+- `[{severity}] {unitName} in {filePath}` — lines {startLine}–{endLine}
 
-**Unit Complexity candidates:**
-```
-### [{severity}] {unitName} in {filePath}
-- Lines {startLine}–{endLine}
-- McCabe complexity: {mcCabe}
-- Simplify branching logic or extract complex conditions
-```
+**Unit Complexity:**
+- `[{severity}] {unitName} in {filePath}` — lines {startLine}–{endLine}, McCabe complexity: {mcCabe}
 
-**Unit Interfacing candidates:**
-```
-### [{severity}] {unitName} in {filePath}
-- Lines {startLine}–{endLine}
-- Parameters: {parameters}
-- Reduce parameter count by grouping related parameters or using configuration objects
-```
+**Unit Interfacing:**
+- `[{severity}] {unitName} in {filePath}` — lines {startLine}–{endLine}, parameters: {parameters}
 
-**Module Coupling candidates:**
-```
-### [{severity}] {filePath}
-- Lines {startLine}–{endLine}
-- Component: {componentName}
-- Reduce coupling by introducing abstractions or restructuring dependencies
-```
+**Module Coupling:**
+- `[{severity}] {filePath}` — lines {startLine}–{endLine}, component: {componentName}
 
-**Component Independence candidates:**
-```
-### [{severity}] {componentName}
-- File: {filePath}, lines {startLine}–{endLine}
-- Increase independence by reducing cross-component dependencies
-```
+**Component Independence:**
+- `[{severity}] {componentName}` — {filePath}, lines {startLine}–{endLine}
 
-**Component Entanglement candidates:**
-```
-### [{severity}] {componentName} — {componentEntanglementType}
-- File: {filePath}, lines {startLine}–{endLine}
-- Type: {human-readable description of entanglement type}
-```
+**Component Entanglement:**
+- `[{severity}] {componentName} — {componentEntanglementType}` — {filePath}, lines {startLine}–{endLine}
 
 ### 4. Prioritized action items
 
-End with a short list of the top recommended actions, prioritized by:
+End with a short list of top recommended actions, prioritized by:
 1. Severity (CRITICAL > HIGH > MEDIUM > LOW)
-2. Properties with the lowest ratings (from Step 3)
+2. Properties with the lowest ratings
 3. Quick wins — candidates that are likely easy to fix
 
 ## Error handling
 
-- **401/403**: Token is expired or lacks permissions. Tell the user to check their token. NEVER show the request or token value.
-- **404**: Customer or system name may be incorrect. Ask the user to verify.
-- **No candidates for a property**: Report that the property has no refactoring candidates — this is a positive result.
-- **No candidates at all**: Congratulate the user — their system has no refactoring candidates.
+- **Script exits with error**: relay the error message to the user. Common causes:
+  - 401/403: Token expired or lacks permissions. NEVER show the token.
+  - 404: Customer or system name may be incorrect.
+- **No candidates for a property**: report it as a positive result.
+- **No candidates at all**: congratulate the user.
