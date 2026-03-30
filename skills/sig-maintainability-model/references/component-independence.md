@@ -16,7 +16,7 @@ affect this metric. Continuous scale — higher hidden % is better.
 - **Modularity** — components with a high percentage of hidden code can evolve
   independently without cross-component impact.
 
-**Guidance:** Couple architecture components loosely. Separate components into an
-interface, that receives incoming communication from other components, and an
-internal part. Changes to the interface may affect dependent components, so keep
-the interface as small as possible.
+**Guidance:** Design architecture components to be loosely coupled. Separate each
+component into an interface that receives incoming communication from other
+components and an internal part. Changes to the interface may affect dependent
+components, so keep the interface as small as possible.
