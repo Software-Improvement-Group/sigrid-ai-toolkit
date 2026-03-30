@@ -7,6 +7,23 @@
   "homepage": "https://docs.sigrid-says.com/integrations/integration-sigrid-mcp.html",
   "repository": "https://github.com/Software-Improvement-Group/sigrid-ai-toolkit",
   "license": "Apache-2.0",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/guard-token.sh"
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-sigrid-prerequisites.sh"
+          }
+        ]
+      }
+    ]
+  },
   "userConfig": {
     "sigrid_token": {
       "title": "Sigrid Token",
