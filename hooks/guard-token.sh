@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# PreToolUse hook — blocks Bash commands that would leak SIGRID_CI_TOKEN.
+# PreToolUse hook — blocks Bash commands that would leak SIGRID_TOKEN.
 #
 # Exit codes:
 #   0 = allow the command
@@ -20,8 +20,8 @@ COMMAND="$(printf '%s' "$INPUT" | jq -r '.tool_input.command // empty')"
 # ── Patterns that would expose the token value ──────────────────────────
 BLOCKED_PATTERNS=(
   # Direct printing of the variable
-  'echo[[:space:]].*SIGRID_CI_TOKEN'
-  'printf[[:space:]].*SIGRID_CI_TOKEN'
+  'echo[[:space:]].*SIGRID_TOKEN'
+  'printf[[:space:]].*SIGRID_TOKEN'
 
   # Environment dumping commands
   '\bprintenv\b'
@@ -32,22 +32,22 @@ BLOCKED_PATTERNS=(
   '\bdeclare\b[[:space:]]*-x'
 
   # Reading the variable into output
-  'cat.*SIGRID_CI_TOKEN'
-  '\bless\b.*SIGRID_CI_TOKEN'
-  '\bmore\b.*SIGRID_CI_TOKEN'
+  'cat.*SIGRID_TOKEN'
+  '\bless\b.*SIGRID_TOKEN'
+  '\bmore\b.*SIGRID_TOKEN'
 
   # Curl/wget sending token to non-Sigrid domains
   'curl[[:space:]].*Bearer.*[^s]igrid'
   'wget[[:space:]].*Bearer.*[^s]igrid'
 
   # Logging token to a file
-  '>.*SIGRID_CI_TOKEN'
-  'tee.*SIGRID_CI_TOKEN'
+  '>.*SIGRID_TOKEN'
+  'tee.*SIGRID_TOKEN'
 )
 
 for pattern in "${BLOCKED_PATTERNS[@]}"; do
   if echo "$COMMAND" | grep -qE "$pattern"; then
-    echo "BLOCKED: This command would expose SIGRID_CI_TOKEN. Use '[ -n \"\$SIGRID_CI_TOKEN\" ] && echo \"Token is set\"' to check existence without revealing the value." >&2
+    echo "BLOCKED: This command would expose SIGRID_TOKEN. Use '[ -n \"\$SIGRID_TOKEN\" ] && echo \"Token is set\"' to check existence without revealing the value." >&2
     exit 2
   fi
 done

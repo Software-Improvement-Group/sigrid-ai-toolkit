@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# PreToolUse hook — blocks Sigrid API calls when SIGRID_CI_TOKEN is not set.
+# PreToolUse hook — blocks Sigrid API calls when SIGRID_TOKEN is not set.
 #
 # Exit codes:
 #   0 = allow the command
@@ -22,12 +22,12 @@ if ! echo "$COMMAND" | grep -q 'sigrid-says.com/rest'; then
   exit 0
 fi
 
-if [ -z "${SIGRID_CI_TOKEN:-}" ]; then
+if [ -z "${SIGRID_TOKEN:-}" ]; then
   {
-    echo "BLOCKED: SIGRID_CI_TOKEN is not set."
+    echo "BLOCKED: SIGRID_TOKEN is not set."
     echo ""
     echo "Set it in your terminal before using Sigrid skills:"
-    echo "  export SIGRID_CI_TOKEN=<your-token>"
+    echo "  export SIGRID_TOKEN=<your-token>"
     echo ""
     echo "Obtain a token from https://sigrid-says.com account settings."
   } >&2

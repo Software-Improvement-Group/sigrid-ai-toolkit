@@ -4,7 +4,7 @@
 Usage:
     python fetch-refactoring-candidates.py <customer> <system> [--count N]
 
-Requires SIGRID_CI_TOKEN environment variable.
+Requires SIGRID_TOKEN environment variable.
 """
 
 import argparse
@@ -103,10 +103,10 @@ def main():
     parser.add_argument("--count", type=int, default=None, help="Limit candidates per property (e.g. 10)")
     args = parser.parse_args()
 
-    token = os.environ.get("SIGRID_CI_TOKEN")
+    token = os.environ.get("SIGRID_TOKEN")
     if not token:
-        print("Error: SIGRID_CI_TOKEN environment variable is not set.", file=sys.stderr)
-        print("Set it with: export SIGRID_CI_TOKEN=<your-token>", file=sys.stderr)
+        print("Error: SIGRID_TOKEN environment variable is not set.", file=sys.stderr)
+        print("Set it with: export SIGRID_TOKEN=<your-token>", file=sys.stderr)
         sys.exit(1)
 
     # Fetch maintainability ratings
@@ -114,7 +114,7 @@ def main():
     if "error" in maint_data:
         code = maint_data["error"]
         if code in (401, 403):
-            print("Error: Authentication failed. Check your SIGRID_CI_TOKEN.", file=sys.stderr)
+            print("Error: Authentication failed. Check your SIGRID_TOKEN.", file=sys.stderr)
         elif code == 404:
             print(f"Error: System not found. Verify customer='{args.customer}' and system='{args.system}'.", file=sys.stderr)
         else:

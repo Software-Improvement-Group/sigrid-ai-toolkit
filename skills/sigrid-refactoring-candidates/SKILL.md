@@ -6,9 +6,11 @@ description: List refactoring candidates across all maintainability properties f
 
 You are helping the user retrieve and review refactoring candidates from Sigrid for a given system. A Python script handles all API calls and aggregation. Your job is to gather the inputs, run the script, and present the results.
 
+## IMPORTANT: Do NOT use curl, wget, or any direct HTTP calls. ALL data fetching is done by the Python script.
+
 ## Token security rules (MANDATORY)
 
-1. NEVER print, echo, or log the token value
+1. NEVER print, echo, or log the SIGRID_TOKEN value
 2. NEVER include the token in text output to the user
 3. Validate token existence without exposing its value
 
@@ -19,14 +21,14 @@ You are helping the user retrieve and review refactoring candidates from Sigrid 
 Run this command EXACTLY:
 
 ```bash
-if [ -n "$SIGRID_CI_TOKEN" ]; then
-  echo "SIGRID_CI_TOKEN is set"
+if [ -n "$SIGRID_TOKEN" ]; then
+  echo "SIGRID_TOKEN is set (${#SIGRID_TOKEN} characters)"
 else
-  echo "SIGRID_CI_TOKEN is NOT set"
+  echo "SIGRID_TOKEN is NOT set"
 fi
 ```
 
-- If NOT set: stop and tell the user to set it via their terminal (`export SIGRID_CI_TOKEN=...`). Remind them to never paste the token in the chat. They can obtain a token from their Sigrid account settings at https://sigrid-says.com.
+- If NOT set: stop and tell the user to set it via their terminal (`export SIGRID_TOKEN=...`). Remind them to never paste the token in the chat. They can obtain a token from their Sigrid account settings at https://sigrid-says.com.
 - If set: proceed to Step 1.
 
 ### Step 1: Get customer and system names
@@ -45,6 +47,8 @@ Before fetching any data, you MUST ask the user the following question and wait 
 **Do NOT proceed until the user has explicitly chosen one of these options.** This is a hard requirement.
 
 ### Step 3: Run the fetch script
+
+This is the ONLY way to fetch data. Do NOT use curl, wget, or any other HTTP tool.
 
 Run the Python script with the values collected in Steps 1 and 2:
 
