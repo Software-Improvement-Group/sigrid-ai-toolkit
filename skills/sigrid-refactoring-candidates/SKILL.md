@@ -20,7 +20,7 @@ Run this command EXACTLY:
 
 ```bash
 if [ -n "$SIGRID_CI_TOKEN" ]; then
-  echo "SIGRID_CI_TOKEN is set (${#SIGRID_CI_TOKEN} characters)"
+  echo "SIGRID_CI_TOKEN is set"
 else
   echo "SIGRID_CI_TOKEN is NOT set"
 fi
