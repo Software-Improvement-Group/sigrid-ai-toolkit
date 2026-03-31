@@ -21,11 +21,7 @@ You are helping the user retrieve and review refactoring candidates from Sigrid 
 Run this command EXACTLY:
 
 ```bash
-if [ -n "$SIGRID_TOKEN" ]; then
-  echo "SIGRID_TOKEN is set (${#SIGRID_TOKEN} characters)"
-else
-  echo "SIGRID_TOKEN is NOT set"
-fi
+[ -n "$SIGRID_TOKEN" ] && echo "Token is set" || echo "Token is NOT set"
 ```
 
 - If NOT set: stop and tell the user to set it via their terminal (`export SIGRID_TOKEN=...`). Remind them to never paste the token in the chat. They can obtain a token from their Sigrid account settings at https://sigrid-says.com.
