@@ -255,6 +255,7 @@ def main():
     if not token:
         print("Error: SIGRID_TOKEN environment variable is not set.", file=sys.stderr)
         print("Set it with: export SIGRID_TOKEN=<your-token>", file=sys.stderr)
+        print("Obtain a token from your Sigrid account settings at https://sigrid-says.com", file=sys.stderr)
         sys.exit(1)
 
     count = args.count if args.count else None
