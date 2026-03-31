@@ -4,7 +4,7 @@ description: List refactoring candidates across all maintainability properties f
 
 # Sigrid Refactoring Candidates
 
-A Python script handles all API calls, report generation, and formatting. Your job is to gather the inputs, run the script, and present the results.
+A Python script fetches refactoring candidates from the Sigrid API. Your job is to gather the inputs, run the script, and present the JSON results.
 
 ## Workflow
 
@@ -19,13 +19,11 @@ Ask the user: **all candidates** or **top N per property**? Do NOT proceed until
 ### Step 3: Run the fetch script
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/scripts/fetch-refactoring-candidates.py" {customer} {system} {--all | --count N} --output FULL_ANALYSIS_RESULTS.md
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/fetch-refactoring-candidates.py" {customer} {system} {--all | --count N}
 ```
 
-The script writes the complete analysis to `FULL_ANALYSIS_RESULTS.md` and prints only the prioritized action list to stdout.
-
-If the script exits with an error, relay the stderr message to the user and stop.
+The script outputs JSON to stdout with `summary` (severity counts per property) and `candidates` (per-property arrays). If it exits with an error, relay the stderr message to the user and stop.
 
 ## Output
 
-Show the user **only** the prioritized action list from stdout, then tell them the full analysis is in `FULL_ANALYSIS_RESULTS.md`. Do NOT reformat or editorialize the script output.
+Present the JSON results to the user. Summarize the key findings and highlight the highest-severity candidates that should be addressed first.
