@@ -16,7 +16,7 @@ Sigrid MCP integrations can be used to leverage Sigrid's capabilities from AI Co
    
 1. Install the Sigrid plugin marketplace
     ```
-    /plugin marketplace add git@github.com:Software-Improvement-Group/sigrid-ai-toolkit.git
+    /plugin marketplace add Software-Improvement-Group/sigrid-ai-toolkit
     ```
 
 2. Install the Sigrid plugin
