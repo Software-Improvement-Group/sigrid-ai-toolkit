@@ -1,6 +1,6 @@
 ---
 name: sig-maintainability
-description: Get details on SIG maintainability model sub-characteristics (analyzability, modifiability, testability, modularity, reusability), its metrics (duplication, unit size, unit complexity, unit interfacing, module coupling, component independence, component entanglement), and the system volume property.
+description: Get details on SIG maintainability model sub-characteristics (analyzability, modifiability, testability, modularity, reusability). Covers metrics (duplication, unit size, unit complexity, unit interfacing, module coupling, component independence, component entanglement) plus the system volume property.
 user-invocable: false
 ---
 
