@@ -58,11 +58,9 @@ influences the rating more than a small one.
 
 System property (informational, not part of the rating since 2026):
 
-- **Volume** — Total system size in person-years. Lines of code per file are
-  counted, then normalized with industry-average productivity factors per
-  language to create a language-independent estimate. Volume is benchmarked on
-  an absolute scale; higher volume indicates higher project risk but does not
-  affect the maintainability rating.
+- **Volume** — Total system size in person-years, calculated by normalizing
+  lines of code with language productivity factors so volumes across languages
+  are comparable. Treat volume as informational only.
 
 **Interpreting findings:** Star rating targets depend on context. Risk
 categories indicate where to look, not what to fix — medium risk is not
