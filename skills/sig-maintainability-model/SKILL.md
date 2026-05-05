@@ -56,11 +56,9 @@ influences the rating more than a small one.
 - **Component Entanglement** — Degree of cyclic/transitive dependency
   anti-patterns between components. Influences modularity.
 
-System property (informational, not part of the rating since 2026):
-
-- **Volume** — Total system size in person-years, calculated by normalizing
-  lines of code with language productivity factors so volumes across languages
-  are comparable. Treat volume as informational only.
+Note: Volume is the total system size in person-years, calculated by normalizing
+lines of code with language productivity factors so volumes across languages are
+comparable. It does not affect the maintainability rating since 2026.
 
 **Interpreting findings:** Star rating targets depend on context. Risk
 categories indicate where to look, not what to fix — medium risk is not
@@ -70,4 +68,4 @@ guidance (e.g., does this unit have a single clear responsibility?).
 When asked about a rated metric, read `references/<metric-name>.md` before
 answering (for the seven metrics above). Use the guidance section to frame
 recommendations — not the risk category a finding falls in. For Volume, use
-the definition above and emphasize that it is informational only.
+the note above and emphasize its role in cross-language normalization.
