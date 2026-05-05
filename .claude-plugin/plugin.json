@@ -12,6 +12,7 @@
       "title": "Sigrid Token",
       "description": "Sigrid API token (obtain from sigrid-says.com)",
       "sensitive": true,
+      "required": true,
       "type": "string"
     }
   },
