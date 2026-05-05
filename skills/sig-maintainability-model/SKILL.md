@@ -1,6 +1,6 @@
 ---
 name: sig-maintainability
-description: Get details on SIG maintainability model sub-characteristics (analyzability, modifiability, testability, modularity, reusability), or any of its metrics (volume, duplication, unit size, unit complexity, unit interfacing, module coupling, component independence, component entanglement).
+description: Get details on SIG maintainability model sub-characteristics (analyzability, modifiability, testability, modularity, reusability). Covers metrics (duplication, unit size, unit complexity, unit interfacing, module coupling, component independence, component entanglement) plus the system volume property.
 user-invocable: false
 ---
 
@@ -8,6 +8,8 @@ user-invocable: false
 
 The SIG maintainability model is the evaluation framework behind Sigrid. It
 defines how source code quality is measured and aggregated into ratings.
+
+Note: Updated for the 2026 model — volume no longer affects the rating and aggregation uses a power mean.
 
 Ratings predict real-world productivity. Issue resolution and feature delivery
 are roughly twice as fast in 4-star systems compared to 2-star systems.
@@ -35,12 +37,10 @@ gradually drift downward.
 Evaluated on five ISO 25010 maintainability sub-characteristics: analyzability,
 modifiability, testability, modularity, and reusability.
 
-These sub-characteristics are measured using eight metrics. All risk-profile
+These sub-characteristics are measured using seven metrics. All risk-profile
 metrics are weighted by lines of code, not by count — a large complex unit
 influences the rating more than a small one.
 
-- **Volume** — Total system size in person-years, normalized across languages.
-  Influences analyzability, testability.
 - **Duplication** — Percentage of redundant code (clones of ≥6 lines).
   Influences analyzability, modifiability.
 - **Unit Size** — Distribution of unit lengths; what % of code lives in large
@@ -56,11 +56,16 @@ influences the rating more than a small one.
 - **Component Entanglement** — Degree of cyclic/transitive dependency
   anti-patterns between components. Influences modularity.
 
+Note: Volume is the total system size in person-years, calculated by normalizing
+lines of code with language productivity factors so volumes across languages are
+comparable. It does not affect the maintainability rating since 2026.
+
 **Interpreting findings:** Star rating targets depend on context. Risk
 categories indicate where to look, not what to fix — medium risk is not
 inherently problematic. Judge findings by the principles in each metric's
 guidance (e.g., does this unit have a single clear responsibility?).
 
-When asked about a specific metric, read `references/<metric-name>.md` before
-answering. Use the guidance section to frame recommendations — not the risk
-category a finding falls in.
+When asked about a rated metric, read `references/<metric-name>.md` before
+answering (for the seven metrics above). Use the guidance section to frame
+recommendations — not the risk category a finding falls in. For Volume, use
+the note above and emphasize its role in cross-language normalization.
