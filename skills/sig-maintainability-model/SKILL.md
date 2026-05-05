@@ -25,9 +25,6 @@ systems. 3 stars is market average; 4 stars is the target for new development.
 The benchmark recalibrates annually; a system that stays unchanged will
 gradually drift downward.
 
-Overall ratings aggregate system properties using a power mean (since 2026),
-which reduces the influence of single high-scoring outliers.
-
 ### Measurement Levels
 
 - **System** — all source code forming the product.
