@@ -1,11 +1,18 @@
 # Sigrid AI Toolkit
 
-A Claude Code plugin that autoconfigures the Sigrid MCP server ([documentation](https://docs.sigrid-says.com/integrations/integration-sigrid-mcp.html)).
+A Claude Code plugin marketplace for Sigrid integrations ([documentation](https://docs.sigrid-says.com/integrations/integration-sigrid-mcp.html)).
 
 Sigrid MCP integrations can be used to leverage Sigrid's capabilities from AI Coding Assistants, Agents and other MCP-based LLM tools.
 
 - *Sigrid Guardrails MCP*: Leverage Sigrid's code analysis to safeguard AI Coding Assistants from introducing security and other quality issues
 - *Sigrid Modernization Recipes MCP*: Use data from Sigrid to let AI Coding Agents perform large scale modernization tasks (coming soon)
+
+## Plugins
+
+| Plugin | Description |
+|--------|-------------|
+| `sigrid` | Autoconfigures the Sigrid MCP server for code quality guardrails |
+| `sigrid-experimental` | Experimental recipes for AI-assisted modernization |
 
 ## Prerequisites
 
@@ -19,7 +26,7 @@ Sigrid MCP integrations can be used to leverage Sigrid's capabilities from AI Co
     /plugin marketplace add Software-Improvement-Group/sigrid-ai-toolkit
     ```
 
-2. Install the Sigrid plugin
+2. Install a plugin
     ```
     /plugin install sigrid@sigrid-ai-toolkit
     ```

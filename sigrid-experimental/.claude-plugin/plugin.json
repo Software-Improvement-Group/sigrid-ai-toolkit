@@ -1,0 +1,10 @@
+{
+  "name": "sigrid-experimental",
+  "description": "Experimental Sigrid recipes for AI-assisted modernization",
+  "author": {
+    "name": "Software Improvement Group"
+  },
+  "homepage": "https://docs.sigrid-says.com",
+  "repository": "https://github.com/Software-Improvement-Group/sigrid-ai-toolkit",
+  "license": "Apache-2.0"
+}
