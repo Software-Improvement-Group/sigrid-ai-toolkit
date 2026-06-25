@@ -5,7 +5,7 @@ A Claude Code plugin marketplace for Sigrid integrations ([documentation](https:
 Sigrid MCP integrations can be used to leverage Sigrid's capabilities from AI Coding Assistants, Agents and other MCP-based LLM tools.
 
 - *Sigrid Guardrails MCP*: Leverage Sigrid's code analysis to safeguard AI Coding Assistants from introducing security and other quality issues
-- *Sigrid Modernization Recipes MCP*: Use data from Sigrid to let AI Coding Agents perform large scale modernization tasks (coming soon)
+- *Sigrid Modernization Recipes MCP*: Use data from Sigrid to let AI Coding Agents perform large scale modernization tasks
 
 ## Plugins
 
@@ -59,3 +59,20 @@ This may happen due to a bug in at least Claude Code 2.1.84. Enter the token as 
 ## Usage
 
 See the [Sigrid MCP documentation](https://docs.sigrid-says.com/integrations/integration-sigrid-mcp.html#using-sigrid-quality-gates-with-ai-coding-agents) for usage instructions.
+
+## Experimental skills
+
+The `sigrid-experimental` plugin contains skills for AI-assisted modernization.
+
+```
+/plugin install sigrid-experimental@sigrid-ai-toolkit
+```
+
+These skills are under active development and will change. We recommend browsing the individual skills in [`sigrid-experimental/skills/`](sigrid-experimental/skills/), reading their READMEs, and adapting them to your own workflow.
+
+| Skill | What it does |
+|-------|--------------|
+| `sigrid-diagnose` | Identifies your weakest maintainability property and surfaces high-leverage refactoring candidates |
+| `sigrid-improve` | Executes refactoring candidates with guardrail verification |
+| `sigrid-ci-feedback` | Runs Sigrid CI locally and returns structured quality feedback |
+| `fix-osh-risk` | Remediates open source health findings — creates merge requests or researched issues |
