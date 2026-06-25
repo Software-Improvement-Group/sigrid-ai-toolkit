@@ -1,11 +1,12 @@
 # Fix OSH Risk
 
+> **Experimental** — this skill is under active development and will change. Use it directly from the plugin, copy and adapt it to your own workflow, or treat it as a reference for building your own skills. See SKILL.md for the full procedure.
+>
+> Adaptation ideas: swap GitLab for GitHub, restrict to ticket-only mode, add ecosystems, or adjust the autonomy thresholds.
+
 Remediates Open Source Health findings from Sigrid. Given a set of dependency risks from OSH, this skill researches
 fixes, applies version bumps where safe, and creates merge requests. When confidence is low or changes are too large,
 it creates a researched GitLab issue instead.
-
-> This skill is open source and designed to be adapted: swap GitLab for GitHub, restrict it to ticket-only mode,
-> add ecosystems, or adjust the autonomy thresholds to match your environment. See SKILL.md for what to change.
 
 ## Setup
 
@@ -33,7 +34,7 @@ the skill targets the correct branch for MRs and Sigrid CI verification.
 
 ## Usage
 
-Invoke with `/modernization-experimental:fix-osh-risk` or let it trigger automatically when you ask Claude to fix
+Invoke with `/sigrid-experimental:fix-osh-risk` or let it trigger automatically when you ask Claude to fix
 dependency risks.
 
 **Interactive mode** (default) — asks you to confirm scope and whether to create an MR or issue at each step. When
