@@ -1,0 +1,174 @@
+{
+  "skill_name": "fix-osh-risk",
+  "runner": {
+    "strategy": "parallel",
+    "isolation": "subprocess",
+    "instructions": "Each 'run' entry MUST be executed as a separate 'claude --bare' subprocess. All runs MUST be launched in parallel (not sequentially). Each subprocess uses the flags specified in the run config. Never run evals from different run groups in the same session.",
+    "prompt_rules": "The subprocess prompt MUST contain ONLY: (1) the skill path to load, and (2) the eval's 'prompt' field verbatim. Do NOT include expected_output, expectations, eval metadata, hints about correct behavior, or any framing like 'you are being tested'. The subprocess must behave exactly as it would for a real user. The expected_output and expectations fields are for GRADING ONLY — they must never appear in or influence the subprocess prompt."
+  },
+  "defaults": {
+    "model": "sonnet",
+    "permissionMode": "auto",
+    "mcpConfig": {"mcpServers": {}},
+    "strictMcpConfig": true
+  },
+  "runs": [
+    {
+      "id": "all",
+      "description": "All evals: standard environment with web access for package registry lookups",
+      "evals": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "env": {},
+      "allowedTools": ["Bash", "Read", "Edit", "Write", "Agent", "WebFetch", "WebSearch"],
+      "sandbox": {
+        "network": {
+          "allowedDomains": ["pypi.org", "npmjs.com", "mvnrepository.com", "central.sonatype.com", "crates.io", "nuget.org", "github.com", "rustsec.org", "nvd.nist.gov"]
+        }
+      }
+    }
+  ],
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Fix this OSH finding. Sigrid customer: test-corp, system: backend-api. Mode: autonomous.\n\nFinding: pkg:pypi/requests@2.28.0 — CVE-2023-32681 (HIGH). Vulnerability in requests package allowing unintended leak of Proxy-Authorization header to destination servers during HTTPS redirects.",
+      "expected_output": "Skill routes to MR path, spawns researcher with CVE context, attempts version bump and Sigrid CI verification, then attempts to create a branch and MR.",
+      "files": [],
+      "expectations": [
+        "Decides to route to MR path (not Issue) — vulnerability fix is a version bump candidate",
+        "Spawns osh-researcher subagent with CVE-2023-32681 and the current version (2.28.0) as context",
+        "Attempts to invoke Sigrid CI verification (sigrid-ci-feedback skill) before creating the artifact",
+        "Attempts to create a branch with a name matching the pattern fix/osh-* (e.g. fix/osh-requests)",
+        "Produces or attempts to produce a persistent artifact (MR or issue) — does NOT degrade to informal text output or verbal recommendation"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Fix this OSH finding. Sigrid customer: test-corp, system: frontend-app. Mode: autonomous.\n\nFinding: pkg:npm/event-stream@3.3.6 — Activity risk: library unmaintained since 2018, compromised in supply-chain attack, no active maintainer.",
+      "expected_output": "Skill routes to Issue path (activity risk = always ticket), does NOT attempt a branch or version bump, researcher is given inactivity + compromise context.",
+      "files": [],
+      "expectations": [
+        "Decides to route to Issue path (NOT MR) — activity risk always results in a ticket per the routing table",
+        "Does NOT attempt to create a branch or perform a version bump — activity risk requires library replacement, not a simple upgrade",
+        "Spawns researcher subagent with actionable context: that the library is unmaintained since 2018 AND was compromised in a supply-chain attack (not just 'activity risk')",
+        "Research includes investigation of alternative libraries that could replace event-stream",
+        "Produces or attempts to produce a persistent artifact (GitLab issue) — does NOT degrade to a verbal recommendation"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Fix these OSH findings. Sigrid customer: test-corp, system: api-gateway. Mode: autonomous.\n\nFindings for pkg:maven/com.fasterxml.jackson.core:jackson-databind@2.9.8:\n1. CVE-2019-14540 (CRITICAL) — polymorphic deserialization via HikariConfig\n2. CVE-2019-16335 (CRITICAL) — polymorphic deserialization via FileNameMap\n3. CVE-2020-36518 (HIGH) — deeply nested JSON causes DoS via stack overflow\n\nCurrent version is 2.9.8, project uses Java 8.",
+      "expected_output": "Skill groups all 3 CVEs as one fix unit, spawns ONE researcher call with all CVE IDs + Java 8 constraint, then routes to MR or Issue depending on whether a single version satisfies all.",
+      "files": [],
+      "expectations": [
+        "Groups all 3 CVEs as a single fix unit for one component — does NOT spawn 3 separate researcher calls",
+        "Spawns researcher with ALL 3 CVE IDs (CVE-2019-14540, CVE-2019-16335, CVE-2020-36518) included in the context",
+        "Researcher is given the Java 8 compatibility constraint so it can filter out versions requiring Java 11+",
+        "Either routes to MR (single version satisfies all 3 CVEs) OR routes to Issue (explains why no single version works) — does NOT attempt partial fixes",
+        "Produces or attempts to produce a persistent artifact (MR or issue)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Fix this OSH finding. Sigrid customer: test-corp, system: data-pipeline. Mode: autonomous.\n\nFinding: pkg:pypi/django@2.2.28 — Freshness risk: current version is 2.2.28, latest available is 5.1.3. Last release of 2.2.x branch was over 2 years ago. The 2.2.x branch is end-of-life and no longer receives security patches.",
+      "expected_output": "Skill routes to MR path (freshness = version bump). Researcher investigates upgrade path from Django 2.2 to latest, considering LTS versions and breaking changes.",
+      "files": [],
+      "expectations": [
+        "Decides to route to MR path (not Issue) — freshness risk is resolvable by version bump",
+        "Spawns researcher with context about current version (2.2.28), latest (5.1.3), and that 2.2.x is end-of-life",
+        "Applies 'smallest sufficient bump' logic — does NOT blindly jump to 5.1.3 but considers intermediate LTS versions or documents why it chose the target version",
+        "Researcher is asked about breaking changes or migration concerns between major versions (2.x → 4.x/5.x is non-trivial)",
+        "Produces or attempts to produce a persistent artifact (MR or issue)"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Fix this OSH finding. Sigrid customer: test-corp, system: billing-service. Mode: autonomous.\n\nFinding: pkg:npm/uuid@9.0.0 — License risk: package is used in the project but its license (MIT) is not declared in the project's license inventory. No license compatibility issue — declaration is simply missing from the project manifest.",
+      "expected_output": "Skill routes to MR path (license declaration = trivial fix). Should NOT replace the library or raise it as a replacement issue — the license is fine, it just needs declaring.",
+      "files": [],
+      "expectations": [
+        "Decides to route to MR path (not Issue) — this is a license declaration fix, not a license incompatibility requiring replacement",
+        "Does NOT recommend replacing the library — the license (MIT) is compatible, it just needs declaring",
+        "Researcher is given context that this is a missing declaration, not a license conflict — research should focus on how to properly declare the license",
+        "Does NOT create an issue for 'further investigation' — this is a trivial declaration fix that belongs on the MR path",
+        "Produces or attempts to produce a persistent artifact (MR)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Fix this OSH finding. Sigrid customer: test-corp, system: auth-service. Mode: interactive.\n\nFinding: pkg:npm/jsonwebtoken@8.5.1 — CVE-2022-23529 (HIGH). Insecure implementation of key retrieval function allows remote attackers to execute arbitrary code via a crafted JWK.\n\nMultiple patched versions available: 9.0.0 (major bump, breaking changes to API), 8.5.2 (if it exists — patch-level fix).",
+      "expected_output": "In interactive mode, the skill should ask the user which version to target rather than auto-selecting. It should present the tradeoff between patch safety and major-bump completeness.",
+      "files": [],
+      "expectations": [
+        "Operates in interactive mode — asks the user to confirm or select the target version rather than auto-picking",
+        "Presents the version options with tradeoff context (patch = safer but may not exist, major = complete fix but breaking changes)",
+        "Does NOT auto-select a version in interactive mode — the skill's mode table says 'Ask which version' for interactive",
+        "Spawns researcher with CVE-2022-23529 and current version 8.5.1 to find actual available patched versions",
+        "Waits for user input at the version selection decision point before proceeding to implementation"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Fix these OSH findings. Sigrid customer: test-corp, system: monolith. Mode: autonomous.\n\nFindings:\n1. pkg:npm/lodash@4.17.15 — CVE-2021-23337 (HIGH) command injection via template\n2. pkg:npm/minimist@0.0.8 — CVE-2021-44906 (CRITICAL) prototype pollution\n3. pkg:pypi/pillow@8.0.0 — CVE-2022-22817 (CRITICAL) arbitrary code execution via PIL.ImageMath.eval\n4. pkg:maven/log4j:log4j@1.2.17 — CVE-2021-44228 (CRITICAL) remote code execution via JNDI lookup\n5. pkg:npm/node-fetch@2.6.0 — CVE-2022-0235 (HIGH) exposure of sensitive information\n6. pkg:pypi/pyyaml@5.3 — CVE-2020-14343 (CRITICAL) arbitrary code execution via full_load\n7. pkg:npm/glob-parent@5.1.0 — CVE-2021-35065 (HIGH) ReDoS vulnerability\n8. pkg:maven/commons-collections:commons-collections@3.2.1 — Vulnerability: deserialization gadget chain",
+      "expected_output": "With 8 unrelated components across 3 ecosystems, the skill should create a single consolidated GitLab issue (>5 unrelated components rule) listing all findings with recommended actions, rather than processing each individually.",
+      "files": [],
+      "expectations": [
+        "Recognizes that 8 unrelated components exceeds the consolidation threshold (skill says >5 unrelated components → single consolidated issue)",
+        "Decides to create ONE consolidated issue rather than 8 separate MRs or issues",
+        "The consolidated issue includes ALL 8 findings with their component purls and CVE IDs",
+        "Does NOT attempt to process each component individually (no 8 separate branches or researcher calls)",
+        "Produces or attempts to produce a single persistent artifact (consolidated GitLab issue)"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Fix this OSH finding. Sigrid customer: test-corp, system: payment-service. Mode: autonomous.\n\nFinding: pkg:npm/express@4.18.1 — CVE-2024-29041 (MEDIUM). Open redirect vulnerability in express when using url-encoded untrusted input in res.location.\n\nNext version available: 4.18.2 (patch bump). Only risk on this component is this vulnerability.",
+      "expected_output": "Skill takes the fast-path: skips research agent, applies the nextVersion (4.18.2) bump directly, runs Sigrid CI to verify. Only if CI still shows risks would it fall back to the research agent.",
+      "files": [],
+      "expectations": [
+        "Takes the fast-path bump — does NOT spawn the osh-researcher subagent as the first action",
+        "Uses the nextVersion (4.18.2) directly without researching alternatives first",
+        "Attempts to create a branch and apply the version bump from 4.18.1 to 4.18.2",
+        "Attempts to invoke Sigrid CI verification after applying the bump to confirm the vulnerability is resolved",
+        "Only falls back to the research agent if Sigrid CI still reports risks after the fast-path bump"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Fix this OSH finding. Sigrid customer: test-corp, system: analytics-service. Mode: autonomous.\n\nFinding: pkg:pypi/flask@2.2.3 — CVE-2023-30861 (HIGH). Cookie session can be permanently set when browser is used to access a malicious site. Also has freshness risk: current version is 2.2.3, latest is 3.1.0.\n\nNext version available: 2.2.4 (patch bump).",
+      "expected_output": "Skill does NOT take the fast-path because the component has both a vulnerability AND a freshness risk — it's not vulnerability-only. It should go through the research agent to address both risks together.",
+      "files": [],
+      "expectations": [
+        "Does NOT take the fast-path bump — the component has multiple risk types (vulnerability + freshness), so it's not vulnerability-only",
+        "Spawns the osh-researcher subagent to research a version that addresses both the CVE and the freshness risk",
+        "Researcher is given context about both the CVE (CVE-2023-30861) and the freshness gap (2.2.3 → 3.1.0)",
+        "Does not blindly apply the nextVersion 2.2.4 without considering the freshness risk",
+        "Produces or attempts to produce a persistent artifact (MR or issue)"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Fix this OSH finding. Sigrid customer: test-corp, system: order-service. Mode: autonomous.\n\nFinding: pkg:npm/axios@0.21.1 — CVE-2023-45857 (HIGH). CSRF token exposure via cross-site request forgery when using withCredentials.\n\nNext version available: 0.21.2 (patch bump). Only risk on this component is this vulnerability.\n\nNote for simulation: after applying the 0.21.2 bump, Sigrid CI still reports CVE-2023-45857 as unresolved (the patch was incomplete and a later version is needed).",
+      "expected_output": "Skill takes the fast-path (vulnerability-only + patch nextVersion), applies 0.21.2, runs Sigrid CI. CI still reports the vulnerability. Skill then falls back to spawning the osh-researcher to find a version that actually resolves the CVE.",
+      "files": [],
+      "expectations": [
+        "Initially takes the fast-path bump — applies nextVersion 0.21.2 without spawning the researcher first",
+        "Attempts to invoke Sigrid CI verification after the bump",
+        "After CI reports the vulnerability still present, falls back to the research agent (spawns osh-researcher)",
+        "Researcher is given context that 0.21.2 was already tried and did NOT resolve CVE-2023-45857",
+        "Does NOT stop at the failed bump — continues to seek a working fix via research"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Fix this OSH finding. Sigrid customer: test-corp, system: notification-service. Mode: autonomous.\n\nFinding: pkg:npm/got@9.6.0 — CVE-2022-33987 (MEDIUM). Open redirect vulnerability allows attacker to redirect to arbitrary URLs.\n\nNext version available: 12.0.0 (major bump). Only risk on this component is this vulnerability.",
+      "expected_output": "Skill does NOT take the fast-path because the nextVersion is a major bump (9.x → 12.x). Fast-path only applies to patch or minor increments. Should go through the research agent to find the smallest safe version.",
+      "files": [],
+      "expectations": [
+        "Does NOT take the fast-path — the nextVersion (12.0.0) is a major bump from 9.6.0, which exceeds the patch/minor condition",
+        "Spawns the osh-researcher subagent to find the smallest version that resolves CVE-2022-33987",
+        "Researcher is given context about the CVE and that a major bump (9.x → 12.x) is required — should investigate if any intermediate version fixes it",
+        "Does not blindly apply the 12.0.0 major bump without research into breaking changes",
+        "Produces or attempts to produce a persistent artifact (MR or issue)"
+      ]
+    }
+  ]
+}
