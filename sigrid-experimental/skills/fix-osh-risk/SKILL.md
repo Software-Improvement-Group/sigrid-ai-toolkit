@@ -67,7 +67,7 @@ If CI still reports risks (e.g. the nextVersion doesn't cover all CVEs, or intro
 
 ### Stage 2b — Research
 
-For each dependency, spawn the `osh-researcher` subagent (registered at plugin level in `modernization-experimental/agents/`) with the library name, ecosystem, and clear descriptions of each risk. The researcher only has web access — no project files, no MCP servers, no internal context.
+For each dependency, spawn the `osh-researcher` subagent (registered at plugin level in `sigrid-experimental/agents/osh-researcher.md`) with the library name, ecosystem, and clear descriptions of each risk. The researcher only has web access — no project files, no MCP servers, no internal context.
 
 Make risk descriptions actionable for web research: a CVE ID is self-explanatory, but Sigrid-specific risks (freshness, activity, stability, management) need context the researcher can't look up. For example, don't just say "freshness risk" — say "current version is 2.3.1, latest available is 4.0.0, last updated 3 years ago." Give the researcher enough to work with without exposing internal system details.
 
