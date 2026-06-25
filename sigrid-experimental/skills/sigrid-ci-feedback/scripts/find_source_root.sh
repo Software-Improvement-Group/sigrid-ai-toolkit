@@ -10,5 +10,5 @@ while [ "$dir" != "/" ]; do
   fi
   dir="$(dirname "$dir")"
 done
-echo "No sigrid.yaml or sigrid.yml found in any parent directory. Ask the user whether the current directory is the source root."
+echo "No sigrid.yaml or sigrid.yml found in any parent directory." >&2
 exit 1
