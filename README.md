@@ -9,10 +9,10 @@ Sigrid MCP integrations can be used to leverage Sigrid's capabilities from AI Co
 
 ## Plugins
 
-| Plugin | Description |
-|--------|-------------|
-| `sigrid` | Autoconfigures the Sigrid MCP server for code quality guardrails |
-| `sigrid-experimental` | Experimental recipes for AI-assisted modernization |
+| Plugin | Description                                                                 |
+|--------|-----------------------------------------------------------------------------|
+| `sigrid` | Autoconfigures the Sigrid MCP server for code quality guardrails and modernization tools |
+| `sigrid-experimental` | Experimental recipes for AI-assisted modernization                          |
 
 ## Prerequisites
 
