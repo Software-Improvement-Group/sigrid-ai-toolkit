@@ -4,14 +4,14 @@ A Claude Code plugin marketplace for Sigrid integrations ([documentation](https:
 
 Sigrid MCP integrations can be used to leverage Sigrid's capabilities from AI Coding Assistants, Agents and other MCP-based LLM tools.
 
-- *Guardrail agents*: Leverage Sigrid's code analysis to prevent AI Coding Assistants from introducing security and other quality issues
+- *Agent guardrails*: Leverage Sigrid's code analysis to prevent AI Coding Assistants from introducing security and other quality issues
 - *Auto-fix agents*: Use data from Sigrid to let AI Coding Agents auto-fix and improve existing quality issues at scale
 
 ## Plugins
 
 | Plugin | Description                                                                 |
 |--------|-----------------------------------------------------------------------------|
-| `sigrid` | Autoconfigures the Sigrid MCP server for guardrail and auto-fix agents |
+| `sigrid` | Autoconfigures the Sigrid MCP server for agent guardrails and auto-fix agents |
 | `sigrid-experimental` | Experimental skills for auto-fix agents                          |
 
 ## Prerequisites
