@@ -9,9 +9,9 @@ Sigrid MCP integrations can be used to leverage Sigrid's capabilities from AI Co
 
 ## Plugins
 
-| Plugin | Description                                                                 |
-|--------|-----------------------------------------------------------------------------|
-| `sigrid` | Autoconfigures the Sigrid MCP server for agent guardrails and auto-fix agents |
+| Plugin | Description                                                                |
+|--------|----------------------------------------------------------------------------|
+| `sigrid` | Autoconfigures the Sigrid MCP server for guardrails and auto-fix agents |
 | `sigrid-experimental` | Experimental skills for auto-fix agents                          |
 
 ## Prerequisites
