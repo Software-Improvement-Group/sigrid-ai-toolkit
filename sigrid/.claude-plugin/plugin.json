@@ -1,6 +1,6 @@
 {
   "name": "sigrid",
-  "description": "Sigrid integration for AI-assisted development",
+  "description": "Sigrid integration for AI-assisted development: guardrails MCP plus recipe skills for diagnosis, refactoring, and open source health fixes",
   "author": {
     "name": "Software Improvement Group"
   },

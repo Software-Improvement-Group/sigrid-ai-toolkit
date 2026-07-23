@@ -7,12 +7,17 @@ Sigrid MCP integrations can be used to leverage Sigrid's capabilities from AI Co
 - *Guardrails*: Leverage Sigrid's code analysis to prevent AI Coding Assistants from introducing security and other quality issues
 - *Auto-fix agents*: Use data from Sigrid to let AI Coding Agents auto-fix and improve existing quality issues at scale
 
-## Plugins
+## The `sigrid` plugin
 
-| Plugin | Description                                                                |
-|--------|----------------------------------------------------------------------------|
-| `sigrid` | Autoconfigures the Sigrid MCP server for guardrails and auto-fix agents |
-| `sigrid-experimental` | Experimental skills for auto-fix agents                          |
+The plugin auto-configures the Sigrid MCP server (guardrails + auto-fix data) and ships skills for diagnosing and improving code quality — the auto-fix agents.
+
+| Skill | What it does |
+|-------|--------------|
+| `setup` | Sets up your Sigrid profile (customer, system, conventions). **Run this first.** |
+| `sigrid-diagnose` | Identifies your weakest maintainability property and surfaces high-leverage refactoring candidates |
+| `sigrid-improve` | Executes refactoring candidates with guardrail verification |
+| `sigrid-ci-feedback` | Runs Sigrid CI locally and returns structured quality feedback |
+| `fix-osh-risk` | Remediates open source health findings — opens change requests or researched issues |
 
 ## Prerequisites
 
@@ -26,13 +31,19 @@ Sigrid MCP integrations can be used to leverage Sigrid's capabilities from AI Co
     /plugin marketplace add Software-Improvement-Group/sigrid-ai-toolkit
     ```
 
-2. Install a plugin
+2. Install the plugin
     ```
     /plugin install sigrid@sigrid-ai-toolkit
     ```
     You'll be prompted for your Sigrid API token on first use. The token is stored securely in your system keychain.
 
-3. Enable auto-update (recommended)
+3. Set up your profile
+    ```
+    /sigrid:setup
+    ```
+    This interviews you for your Sigrid customer/system and conventions, and writes them to a profile the skills read. The profile lives outside the plugin, so it survives updates.
+
+4. Enable auto-update (recommended)
 
 ### How to: Enable auto-update
 
@@ -58,21 +69,12 @@ This may happen due to a bug in at least Claude Code 2.1.84. Enter the token as 
 
 ## Usage
 
-See the [Sigrid MCP documentation](https://docs.sigrid-says.com/integrations/integration-sigrid-mcp.html#using-sigrid-quality-gates-with-ai-coding-agents) for usage instructions.
+See the [Sigrid MCP documentation](https://docs.sigrid-says.com/integrations/integration-sigrid-mcp.html) for MCP usage. Each skill has its own `README.md` under [`sigrid/skills/`](sigrid/skills/).
 
-## Experimental skills
+## Customization — profile, not fork
 
-The `sigrid-experimental` plugin contains skills for auto-fix agents.
+Adapt the plugin by configuring, not forking. In order of preference (only the last loses clean updates):
 
-```
-/plugin install sigrid-experimental@sigrid-ai-toolkit
-```
-
-These skills are under active development and will change. We recommend browsing the individual skills in [`sigrid-experimental/skills/`](sigrid-experimental/skills/), reading their READMEs, and adapting them to your own workflow.
-
-| Skill | What it does |
-|-------|--------------|
-| `sigrid-diagnose` | Identifies your weakest maintainability property and surfaces high-leverage refactoring candidates |
-| `sigrid-improve` | Executes refactoring candidates with guardrail verification |
-| `sigrid-ci-feedback` | Runs Sigrid CI locally and returns structured quality feedback |
-| `fix-osh-risk` | Remediates open source health findings — creates merge requests or researched issues |
+1. **Run `/sigrid:setup`** → writes your profile. Survives `/plugin update`.
+2. **Edit the profile** (`~/.claude/plugins/config/sigrid-ai-toolkit/sigrid/CLAUDE.md`) or connect a different git-host MCP. Survives updates.
+3. **Fork a `SKILL.md`** → the escape hatch for rewriting a procedure. You then own updates to it.

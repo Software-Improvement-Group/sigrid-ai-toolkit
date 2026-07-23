@@ -16,7 +16,7 @@ Not all refactoring candidates are equal. Choosing the wrong one wastes effort o
 
 ## Prerequisites
 
-- Sigrid customer and system name must be in context. If not, check your context file (e.g. AGENTS.md, CLAUDE.md). If not there, ask the user and store them in the context file.
+- Sigrid customer and system name come from the Sigrid profile written by `/sigrid:setup` at `~/.claude/plugins/config/sigrid-ai-toolkit/sigrid/CLAUDE.md`. If the profile is missing or the values are unset, ask the user (and suggest running `/sigrid:setup` to persist them).
 - The Sigrid MCP plugin is available: `refactoring_candidates`,
   `maintainability_ratings`, `code_quality_guardrails`
 

@@ -31,4 +31,4 @@ If no patched or fixed version exists, say so explicitly. "No fix available" and
 
 If a source is unreachable or rate-limited, note it and continue with other sources rather than retrying indefinitely.
 
-Always include source URLs — the caller uses these in merge requests and tickets.
+Always include source URLs — the caller uses these in change requests and issues.

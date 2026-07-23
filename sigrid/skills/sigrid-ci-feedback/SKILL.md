@@ -1,7 +1,6 @@
 ---
 name: sigrid-ci-feedback
 user-invocable: true
-disable-model-invocation: false
 description: >
   Run Sigrid CI locally on the current working tree and return structured quality feedback.
   Use when the user or agent wants maintainability, security, or open source health feedback
@@ -18,7 +17,7 @@ Verify these in order before running. If any check fails, stop and ask the user.
 2. **Python** — Run `bash ${CLAUDE_SKILL_DIR}/scripts/check_python.sh`. Verifies Python 3 is available. The script prints the Python command to use (`python3` or `python`); capture it for later.
 3. **Sigrid CI scripts** — Run `bash ${CLAUDE_SKILL_DIR}/scripts/ensure_sigridci.sh`. Clones the sigridci repository to a temporary directory. The script prints the path to the cloned directory; capture it as `SIGRIDCI_DIR`.
 4. **Source root** — If not explicitly provided, run `bash ${CLAUDE_SKILL_DIR}/scripts/find_source_root.sh <project-directory>` to locate the directory containing `sigrid.yaml`/`sigrid.yml` by searching upward. If the script finds nothing, ask the user.
-5. **Customer and system** — Must be provided exactly as registered in Sigrid. Only proceed if the user stated them explicitly (e.g. "customer is acme, system is backend"). If the values are implied — e.g. inferred from a company name, repo name, or directory — confirm them before running.
+5. **Customer and system** — Must match what is registered in Sigrid. Read them from the Sigrid profile (`~/.claude/plugins/config/sigrid-ai-toolkit/sigrid/CLAUDE.md`, written by `/sigrid:setup`), or use values the user stated explicitly (e.g. "customer is acme, system is backend"). If the values are only implied — inferred from a company name, repo name, or directory — confirm them before running.
 6. **Capabilities** — The Sigrid analyses to run (also known as "models" or "licenses"). Must be provided as a comma-separated string. Valid values: `maintainability`, `osh`, `security`. Example: `maintainability,osh`. No default. When unclear, ask the user which capabilities are needed.
 
 ## Running the analysis
