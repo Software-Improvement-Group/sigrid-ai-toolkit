@@ -76,5 +76,5 @@ See the [Sigrid MCP documentation](https://docs.sigrid-says.com/integrations/int
 Adapt the plugin by configuring, not forking. In order of preference (only the last loses clean updates):
 
 1. **Run `/sigrid:setup`** → writes your profile. Survives `/plugin update`.
-2. **Edit the profile** (`~/.claude/plugins/config/sigrid-ai-toolkit/sigrid/CLAUDE.md`) or connect a different git-host MCP. Survives updates.
+2. **Edit the profile** (`${CLAUDE_PLUGIN_DATA}/CLAUDE.md`, i.e. `~/.claude/plugins/data/sigrid-sigrid-ai-toolkit/CLAUDE.md`) or connect a different git-host MCP. Survives updates.
 3. **Fork a `SKILL.md`** → the escape hatch for rewriting a procedure. You then own updates to it.

@@ -4,15 +4,16 @@ This file is the **customization surface** for the Sigrid plugin. It captures yo
 conventions so the skills (`sigrid-diagnose`, `sigrid-improve`, `fix-osh-risk`,
 `sigrid-ci-feedback`) produce guidance specific to you instead of generic output.
 
-**This is a template.** The live copy that the skills read lives outside the plugin, at a fixed,
-version-independent path:
+**This is a template.** The live copy that the skills read lives in the plugin's persistent data
+directory, exposed by Claude Code as `${CLAUDE_PLUGIN_DATA}`:
 
 ```
-~/.claude/plugins/config/sigrid-ai-toolkit/sigrid/CLAUDE.md
+${CLAUDE_PLUGIN_DATA}/CLAUDE.md
 ```
 
-This is deliberately **not** under `~/.claude/plugins/cache/` — the cache is version-scoped and
-replaced on every update, whereas the `config/` path is stable. So your customization
+For this plugin that resolves to `~/.claude/plugins/data/sigrid-sigrid-ai-toolkit/CLAUDE.md`. This is
+the officially supported per-plugin data location: it lives **outside** the version-scoped
+`~/.claude/plugins/cache/` (which is replaced on every update), so your customization
 **survives `/plugin update`** and is never clobbered when the plugin auto-updates on newer commits.
 
 Populate it by running `/sigrid:setup`, which interviews you and writes the file. You can also
@@ -27,10 +28,14 @@ Each Sigrid *system* corresponds to one codebase, so you may work across several
 here — one block per system. Both values appear in your Sigrid URL: `sigrid-says.com/<customer>/<system>`.
 
 **How skills pick the active system:** they match the current repository's git remote
-(`git remote get-url origin`) against each block's `Repo` key. On exactly one match, that system is
-used. If nothing matches, more than one matches, or several blocks have no `Repo` key, the skill asks
-(interactive) or aborts (autonomous) rather than guessing. A profile with a single block and no `Repo`
-key is always used unconditionally — the simple single-system case needs no key.
+(`git remote get-url origin`) against each block's `Repo` key. Match on the meaningful identity —
+`host/owner/repo` — not on an exact string: treat SSH and HTTPS forms as equal, and ignore a trailing
+`.git`, a trailing slash, and case (e.g. `git@github.com:acme/payments-api.git`,
+`https://github.com/acme/payments-api`, and `github.com/acme/payments-api` all denote the same repo).
+On exactly one match, that system is used. If nothing matches, more than one matches, or several
+blocks have no `Repo` key, the skill asks (interactive) or aborts (autonomous) rather than guessing. A
+profile with a single block and no `Repo` key is always used unconditionally — the simple
+single-system case needs no key.
 
 **Persist what gets resolved.** This profile is the single source of truth for every setting it
 covers — not just customer/system, but baseline branch, git-host conventions, behavior preferences,

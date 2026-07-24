@@ -30,7 +30,7 @@ crates.io, nuget.org, github.com, rustsec.org
 ### Context requirements
 
 The Sigrid customer name, system name, baseline branch, and git-host conventions come from the **Sigrid profile**
-(`~/.claude/plugins/config/sigrid-ai-toolkit/sigrid/CLAUDE.md`). Run `/sigrid:setup` to populate it. If the
+(`${CLAUDE_PLUGIN_DATA}/CLAUDE.md`, i.e. `~/.claude/plugins/data/sigrid-sigrid-ai-toolkit/CLAUDE.md`). Run `/sigrid:setup` to populate it. If the
 baseline branch is not `main`, set it there so the skill targets the correct branch for change requests and Sigrid CI
 verification.
 

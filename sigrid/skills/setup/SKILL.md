@@ -15,23 +15,23 @@ Populates the **Sigrid profile** — the customization surface every Sigrid skil
 
 ## Where the profile lives
 
-The profile is written outside the plugin, at a fixed, version-independent path so it survives
-`/plugin update`:
+The profile is written to the plugin's persistent data directory, exposed as `${CLAUDE_PLUGIN_DATA}`,
+so it survives `/plugin update`:
 
 ```
-~/.claude/plugins/config/sigrid-ai-toolkit/sigrid/CLAUDE.md
+${CLAUDE_PLUGIN_DATA}/CLAUDE.md
 ```
 
-This is deliberately **not** under `~/.claude/plugins/cache/` — the cache is version-scoped and
-replaced on every update. The `CLAUDE.md` shipped with the plugin is only a template (it
-too is replaced on update); never write user data there.
+This is the officially supported per-plugin data location — it lives **outside** the version-scoped
+`~/.claude/plugins/cache/`, which is replaced on every update. The `CLAUDE.md` shipped with the plugin
+is only a template (it too is replaced on update); never write user data there.
 
 ## Procedure
 
 1. **Read the template.** Open `CLAUDE.md` at the plugin root to get the current field
    list and inline guidance. Use it as the structure for both the interview and the file you write.
 
-2. **Check for an existing profile.** Check the path above. If it exists, read it and treat this as
+2. **Check for an existing profile.** Read `${CLAUDE_PLUGIN_DATA}/CLAUDE.md`. If it exists, treat this as
    an **update** — list the systems already recorded and ask whether the user wants to add a new
    system, edit an existing one, or change the shared conventions. Never silently overwrite populated
    fields.
@@ -47,8 +47,10 @@ too is replaced on update); never write user data there.
        - **customer**: lowercase alphanumeric, minimum 2 characters.
        - **system**: lowercase alphanumeric segments separated by hyphens.
      - **Repo match key** — so skills can auto-select the right system, record how each maps to a
-       repository. Run `git remote get-url origin` in the relevant checkout to prefill it, and offer
-       that value. Only a single-system profile may omit the key.
+       repository. Run `git remote get-url origin` in the relevant checkout to prefill it. Store it in
+       the canonical `host/owner/repo` form (strip any `git@`/`https://` prefix, the `.git` suffix, and
+       trailing slash — e.g. `github.com/acme/payments-api`) so matching is form-independent. Only a
+       single-system profile may omit the key.
    - **Git host conventions** — forge (GitLab/GitHub/other); MR-vs-PR wording; branch naming;
      required approvals; draft behaviour; which labels/milestones actually exist.
 
@@ -57,8 +59,9 @@ too is replaced on update); never write user data there.
    open a change request vs. an issue, who to notify). Do not push for answers to every possible
    behavior; the defaults are fine when they have no preference.
 
-4. **Write the profile.** Create the parent directories if needed and write the filled-in file to
-   the path above. Preserve the template's section structure so skills can find fields reliably.
+4. **Write the profile.** Ensure the data directory exists first (`mkdir -p "${CLAUDE_PLUGIN_DATA}"`),
+   then write the filled-in file to `${CLAUDE_PLUGIN_DATA}/CLAUDE.md`. Preserve the template's section
+   structure so skills can find fields reliably.
 
 5. **Confirm.** Show the user a short summary of what was written and the path, and remind them they
    can re-run `/sigrid:setup` or edit the file directly to change conventions later.
@@ -66,5 +69,7 @@ too is replaced on update); never write user data there.
 ## Notes
 
 - This skill only writes the profile. It never touches project code or calls the Sigrid MCP.
-- Never store the Sigrid API token here — the token is handled by plugin `userConfig` and lives in
-  the OS keychain.
+- Never store the Sigrid API token in the profile. The MCP token is handled by plugin `userConfig`
+  and lives in the OS keychain. Note this keychain token is **not** visible to the `sigrid-ci-feedback`
+  skill, which runs Sigrid CI as a local subprocess and reads a separate `SIGRID_CI_TOKEN` (or
+  `SIGRID_TOKEN`) shell environment variable the user exports themselves.
