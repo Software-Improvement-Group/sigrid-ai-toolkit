@@ -23,8 +23,10 @@ anything that is missing here.
 
 ## Sigrid system
 
-- **Customer**: <your Sigrid customer/account name, exactly as registered>
-- **System**: <your Sigrid system name, exactly as registered>
+Both appear in your Sigrid URL: `sigrid-says.com/<customer>/<system>`.
+
+- **Customer**: <your Sigrid customer/account name, exactly as registered — lowercase alphanumeric, min 2 chars>
+- **System**: <your Sigrid system name, exactly as registered — lowercase alphanumeric segments separated by hyphens>
 - **Baseline branch**: <the branch Sigrid analyses, e.g. `main` — used for change-request targets and CI verification>
 
 ## Git host conventions

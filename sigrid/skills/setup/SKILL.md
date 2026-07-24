@@ -38,6 +38,11 @@ too is replaced on update); never write user data there.
 3. **Interview.** Ask in small batches, not one giant form. Cover the concrete settings first:
    - **Sigrid system** — customer name and system name, exactly as registered in Sigrid (do not
      infer from company or repo name — confirm). Baseline branch Sigrid analyses.
+     - Hint the user: both can be read straight off their Sigrid URL, which has the shape
+       `sigrid-says.com/<customer>/<system>`.
+     - Validate against Sigrid's naming rules before writing, and ask again if a value doesn't fit:
+       - **customer**: lowercase alphanumeric, minimum 2 characters.
+       - **system**: lowercase alphanumeric segments separated by hyphens.
    - **Git host conventions** — forge (GitLab/GitHub/other); MR-vs-PR wording; branch naming;
      required approvals; draft behaviour; which labels/milestones actually exist.
 
