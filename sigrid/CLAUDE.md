@@ -21,12 +21,32 @@ anything that is missing here.
 
 ---
 
-## Sigrid system
+## Sigrid systems
 
-Both appear in your Sigrid URL: `sigrid-says.com/<customer>/<system>`.
+Each Sigrid *system* corresponds to one codebase, so you may work across several. List every system
+here — one block per system. Both values appear in your Sigrid URL: `sigrid-says.com/<customer>/<system>`.
 
-- **Customer**: <your Sigrid customer/account name, exactly as registered — lowercase alphanumeric, min 2 chars>
-- **System**: <your Sigrid system name, exactly as registered — lowercase alphanumeric segments separated by hyphens>
+**How skills pick the active system:** they match the current repository's git remote
+(`git remote get-url origin`) against each block's `Repo` key. On exactly one match, that system is
+used. If nothing matches, more than one matches, or several blocks have no `Repo` key, the skill asks
+(interactive) or aborts (autonomous) rather than guessing. A profile with a single block and no `Repo`
+key is always used unconditionally — the simple single-system case needs no key.
+
+**Persist what gets resolved.** This profile is the single source of truth for every setting it
+covers — not just customer/system, but baseline branch, git-host conventions, behavior preferences,
+and anything else recorded here. Whenever a skill establishes such a setting during a run — by asking,
+or from a value the user states inline — rather than reading it from this profile, it writes that
+value back before continuing (filling in an existing block/field or adding a new one, keyed by the
+current repo's remote where it is system-specific). The next run then resolves silently. This write is
+additive: never overwrite a populated field with a different value without confirming, and never write
+the Sigrid token here.
+
+Copy the block below once per system:
+
+### <label, e.g. payments-api>
+- **Repo**: <git remote used to match the working dir, e.g. `github.com/acme/payments-api` — omit only if this is your single system>
+- **Customer**: <lowercase alphanumeric, min 2 chars>
+- **System**: <lowercase alphanumeric segments separated by hyphens>
 - **Baseline branch**: <the branch Sigrid analyses, e.g. `main` — used for change-request targets and CI verification>
 
 ## Git host conventions

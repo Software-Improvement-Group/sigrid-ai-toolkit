@@ -16,7 +16,7 @@ Not all refactoring candidates are equal. Choosing the wrong one wastes effort o
 
 ## Prerequisites
 
-- Sigrid customer and system name come from the Sigrid profile written by `/sigrid:setup` at `~/.claude/plugins/config/sigrid-ai-toolkit/sigrid/CLAUDE.md`. If the profile is missing or the values are unset, ask the user (and suggest running `/sigrid:setup` to persist them).
+- Sigrid customer and system come from the Sigrid profile written by `/sigrid:setup` at `~/.claude/plugins/config/sigrid-ai-toolkit/sigrid/CLAUDE.md`. The profile may list several systems; select the one whose `Repo` key matches the current repository, per the profile's resolution rule. If the profile is missing, no entry matches, or the match is ambiguous, ask the user (and suggest running `/sigrid:setup` to persist them). Whenever any profile-covered setting is established during the run by asking or stated inline (customer/system, baseline branch, or any other), write it back into the profile additively (keyed by the current repo's remote where system-specific) so future runs resolve without asking.
 - The Sigrid MCP plugin is available: `refactoring_candidates`,
   `maintainability_ratings`, `code_quality_guardrails`
 

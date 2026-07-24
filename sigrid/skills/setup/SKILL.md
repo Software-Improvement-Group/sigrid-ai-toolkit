@@ -32,17 +32,23 @@ too is replaced on update); never write user data there.
    list and inline guidance. Use it as the structure for both the interview and the file you write.
 
 2. **Check for an existing profile.** Check the path above. If it exists, read it and treat this as
-   an **update** — show the current values and only ask about fields the user wants to change or that
-   are still placeholders. Never silently overwrite populated fields.
+   an **update** — list the systems already recorded and ask whether the user wants to add a new
+   system, edit an existing one, or change the shared conventions. Never silently overwrite populated
+   fields.
 
 3. **Interview.** Ask in small batches, not one giant form. Cover the concrete settings first:
-   - **Sigrid system** — customer name and system name, exactly as registered in Sigrid (do not
-     infer from company or repo name — confirm). Baseline branch Sigrid analyses.
+   - **Sigrid system(s)** — a profile can hold several systems (one per codebase), so ask whether the
+     user works across more than one and capture each. For every system collect customer name and
+     system name, exactly as registered in Sigrid (do not infer from company or repo name — confirm),
+     plus the baseline branch Sigrid analyses.
      - Hint the user: both can be read straight off their Sigrid URL, which has the shape
        `sigrid-says.com/<customer>/<system>`.
      - Validate against Sigrid's naming rules before writing, and ask again if a value doesn't fit:
        - **customer**: lowercase alphanumeric, minimum 2 characters.
        - **system**: lowercase alphanumeric segments separated by hyphens.
+     - **Repo match key** — so skills can auto-select the right system, record how each maps to a
+       repository. Run `git remote get-url origin` in the relevant checkout to prefill it, and offer
+       that value. Only a single-system profile may omit the key.
    - **Git host conventions** — forge (GitLab/GitHub/other); MR-vs-PR wording; branch naming;
      required approvals; draft behaviour; which labels/milestones actually exist.
 
