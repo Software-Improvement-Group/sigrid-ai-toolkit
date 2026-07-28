@@ -1,6 +1,6 @@
 # Sigrid Diagnose
 
-> **Experimental** — this skill is under active development and will change. Use it directly from the plugin, copy and adapt it to your own workflow, or treat it as a reference for building your own skills. See SKILL.md for the full procedure.
+> **Adapting this skill.** Configure it by running `/sigrid:setup` to set your customer, system, and conventions in the profile — these survive plugin updates.
 >
 > Pairs with `sigrid-improve` — diagnose first, then act.
 
@@ -18,10 +18,10 @@ This skill is diagnosis only — it does not make code changes. Use `sigrid-impr
 ## Prerequisites
 
 - Sigrid MCP plugin (`maintainability_ratings`, `refactoring_candidates`)
-- Sigrid customer and system name in context (e.g. CLAUDE.md)
+- Sigrid customer and system name in the profile (`/sigrid:setup`)
 
 ## Usage
 
 ```
-/sigrid-experimental:sigrid-diagnose
+/sigrid:sigrid-diagnose
 ```

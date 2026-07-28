@@ -1,6 +1,6 @@
 # Sigrid CI Feedback
 
-> **Experimental** — this skill is under active development and will change. Use it directly from the plugin, copy and adapt it to your own workflow, or treat it as a reference for building your own skills. See SKILL.md for the full procedure.
+> **Adapting this skill.** Configure it by running `/sigrid:setup` to set your customer, system, and conventions in the profile — these survive plugin updates. See SKILL.md for the full procedure.
 
 Runs Sigrid CI locally on the current working tree and returns structured quality feedback. Results are never published to Sigrid unless explicitly requested.
 
@@ -21,5 +21,5 @@ Runs Sigrid CI locally on the current working tree and returns structured qualit
 ## Usage
 
 ```
-/sigrid-experimental:sigrid-ci-feedback for maintainability on customer "corp" and system "backend"
+/sigrid:sigrid-ci-feedback for maintainability on customer "corp" and system "backend"
 ```

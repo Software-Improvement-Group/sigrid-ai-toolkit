@@ -1,11 +1,12 @@
 ---
 name: sigrid-ci-feedback
 user-invocable: true
-disable-model-invocation: false
 description: >
-  Run Sigrid CI locally on the current working tree and return structured quality feedback.
-  Use when the user or agent wants maintainability, security, or open source health feedback
-  on local code without pushing to a remote or triggering a CI pipeline.
+  Run Sigrid analysis locally on the current working tree and return structured
+  maintainability, security, and open-source-health feedback — before committing or pushing, without
+  triggering a remote CI pipeline. Use when the user wants Sigrid's verdict on
+  local changes Sigrid has not analysed yet. Trigger on "run Sigrid on my changes", "check this before
+  I push", "sigrid ci", or "what would Sigrid say about my current code".
 ---
 
 # Sigrid CI Feedback
@@ -14,11 +15,11 @@ description: >
 
 Verify these in order before running. If any check fails, stop and ask the user.
 
-1. **Token** — Run `bash ${CLAUDE_SKILL_DIR}/scripts/check_token.sh`. Verifies that `SIGRID_CI_TOKEN` or `SIGRID_TOKEN` is set without reading the value.
+1. **Token** — Run `bash ${CLAUDE_SKILL_DIR}/scripts/check_token.sh`. Verifies that `SIGRID_CI_TOKEN` or `SIGRID_TOKEN` is set without reading the value. Note: this is a shell environment variable the user exports themselves — it is **separate** from the MCP `sigrid_token` set via `/plugin` config (that one lives in the OS keychain and is not accessible to this local script). If the check fails, ask the user to `export SIGRID_CI_TOKEN=<their Sigrid token>`; do not point them at the keychain token.
 2. **Python** — Run `bash ${CLAUDE_SKILL_DIR}/scripts/check_python.sh`. Verifies Python 3 is available. The script prints the Python command to use (`python3` or `python`); capture it for later.
 3. **Sigrid CI scripts** — Run `bash ${CLAUDE_SKILL_DIR}/scripts/ensure_sigridci.sh`. Clones the sigridci repository to a temporary directory. The script prints the path to the cloned directory; capture it as `SIGRIDCI_DIR`.
 4. **Source root** — If not explicitly provided, run `bash ${CLAUDE_SKILL_DIR}/scripts/find_source_root.sh <project-directory>` to locate the directory containing `sigrid.yaml`/`sigrid.yml` by searching upward. If the script finds nothing, ask the user.
-5. **Customer and system** — Must be provided exactly as registered in Sigrid. Only proceed if the user stated them explicitly (e.g. "customer is acme, system is backend"). If the values are implied — e.g. inferred from a company name, repo name, or directory — confirm them before running.
+5. **Customer and system** — Must match what is registered in Sigrid. Read them from the Sigrid profile (`${CLAUDE_PLUGIN_DATA}/CLAUDE.md`, written by `/sigrid:setup`), or use values the user stated explicitly (e.g. "customer is acme, system is backend"). The profile may list several systems; select the one whose `Repo` key matches the current repository, per the profile's resolution rule. If the values are only implied — inferred from a company name, repo name, or directory — or the match is ambiguous, confirm them before running. Whenever any profile-covered setting is established during the run by asking or stated inline (customer/system, capabilities preferences, or any other), write it back into the profile additively (keyed by the current repo's remote where system-specific) so future runs resolve without asking. Never write the token to the profile.
 6. **Capabilities** — The Sigrid analyses to run (also known as "models" or "licenses"). Must be provided as a comma-separated string. Valid values: `maintainability`, `osh`, `security`. Example: `maintainability,osh`. No default. When unclear, ask the user which capabilities are needed.
 
 ## Running the analysis

@@ -15,7 +15,7 @@ Executes refactoring candidates identified by Sigrid. Two modes: autonomous (run
 
 ## Prerequisites
 
-- Sigrid customer and system name must be in context. If not, check your context file (e.g. AGENTS.md, CLAUDE.md). If not there: in **interactive** mode, ask the user and store them in the context file; in **autonomous** mode, abort with a clear error.
+- Sigrid customer and system come from the Sigrid profile written by `/sigrid:setup` at `${CLAUDE_PLUGIN_DATA}/CLAUDE.md`. The profile may list several systems; select the one whose `Repo` key matches the current repository, per the profile's resolution rule. Apply any behavior guidance the profile records (e.g. off-limits code, preferred levers). If the profile is missing, no entry matches, or the match is ambiguous: in **interactive** mode, ask the user (and suggest running `/sigrid:setup`); in **autonomous** mode, abort with a clear error. Whenever any profile-covered setting is established during the run by asking or stated inline (customer/system, baseline branch, behavior preferences, or any other), write it back into the profile additively (keyed by the current repo's remote where system-specific) so future runs resolve without asking.
 - The Sigrid MCP plugin is available: `code_quality_guardrails`. If not available: abort with a clear error regardless of mode.
 
 ## Autonomy modes
@@ -35,7 +35,7 @@ Executes refactoring candidates identified by Sigrid. Two modes: autonomous (run
 
 ### Step 1 — Establish context
 
-If invoked right after `/sigrid-diagnose`, reuse its output: you already know the weakest property and the top candidates. If no diagnosis is in context, run `/sigrid-diagnose` first.
+If invoked right after `/sigrid:sigrid-diagnose`, reuse its output: you already know the weakest property and the top candidates. If no diagnosis is in context, run `/sigrid:sigrid-diagnose` first.
 
 ### Step 2 — Ask for mode (if not already provided)
 

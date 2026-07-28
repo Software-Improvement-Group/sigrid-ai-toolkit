@@ -9,15 +9,11 @@
   "plugins": [
     {
       "name": "sigrid",
+      "displayName": "Sigrid",
       "source": "./sigrid",
-      "keywords": ["sigrid", "code-quality", "maintainability", "security"],
+      "description": "Sigrid integration for AI-assisted development: guardrails MCP plus skills for maintainability diagnosis, refactoring, and open source health fixes",
+      "keywords": ["sigrid", "code-quality", "maintainability", "security", "refactor", "open-source"],
       "category": "code-quality"
-    },
-    {
-      "name": "sigrid-experimental",
-      "source": "./sigrid-experimental",
-      "keywords": ["sigrid", "code-quality", "experimental", "refactor", "open-source"],
-      "category": "auto-fix"
     }
   ]
 }
