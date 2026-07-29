@@ -31,6 +31,7 @@ Verify these in order before running. If any check fails, stop and ask the user.
   --source <SOURCE_ROOT> \
   --out <OUTPUT_DIR> \
   --capability <CAPABILITIES> \
+  --disable-onboarding \
   > /dev/null
 ```
 
@@ -38,6 +39,8 @@ Where:
 - `<PYTHON>` is the command returned by `check_python.sh`
 - `<SIGRIDCI_DIR>` is the path returned by `ensure_sigridci.sh`
 - `<OUTPUT_DIR>` — a fresh temporary directory (e.g., `mktemp -d`). Do not reuse a previous output directory.
+
+Include `--disable-onboarding` **only for feedback-only runs** (no publish flag). Without it, sigridci on-boards — i.e. publishes — a not-yet-existing system even in feedback mode, which a local check must never do. Omit the flag when publishing (`--publish`/`--publishonly`), since publishing is the intended way to on-board. When the system does not exist, this run exits non-zero and writes no feedback file (the `System is not yet on-boarded to Sigrid` message goes to stdout, which this command discards) — so treat *non-zero exit with no feedback file* as "system not on-boarded", report it to the user (it is not a crash), and do not retry.
 
 Redirect stdout to `/dev/null`. Stderr is kept for progress and error messages.
 
