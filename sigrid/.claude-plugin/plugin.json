@@ -1,6 +1,6 @@
 {
   "name": "sigrid",
-  "description": "Sigrid integration for AI-assisted development: guardrails MCP plus skills for maintainability diagnosis, refactoring, and open source health fixes",
+  "description": "Prevent and fix technical debt with Sigrid: guardrails against new issues, and skills to diagnose and auto-fix existing ones.",
   "author": {
     "name": "Software Improvement Group"
   },

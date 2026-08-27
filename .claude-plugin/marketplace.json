@@ -11,9 +11,9 @@
       "name": "sigrid",
       "displayName": "Sigrid",
       "source": "./sigrid",
-      "description": "Sigrid integration for AI-assisted development: guardrails MCP plus skills for maintainability diagnosis, refactoring, and open source health fixes",
+      "description": "Prevent and fix technical debt with Sigrid: guardrails against new issues, and skills to diagnose and auto-fix existing ones.",
       "keywords": ["sigrid", "code-quality", "maintainability", "security", "refactor", "open-source"],
-      "category": "code-quality"
+      "category": "development"
     }
   ]
 }
