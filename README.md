@@ -19,6 +19,12 @@ The plugin auto-configures the Sigrid MCP server (guardrails + auto-fix data) an
 | `sigrid-ci-feedback` | Runs Sigrid CI locally and returns structured quality feedback |
 | `fix-osh-risk` | Remediates open source health findings — opens change requests or researched issues |
 
+### Auto-run guardrails hook
+
+The plugin automatically runs the guardrails check on production-code files as Claude edits them.
+It's on by default; turn it off via `/plugin` → `Installed` → `sigrid` → `Configure options` →
+`Auto-run guardrails check`.
+
 ## Prerequisites
 
 - [Claude Code](https://claude.ai/code)

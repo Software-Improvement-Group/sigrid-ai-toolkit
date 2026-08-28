@@ -14,6 +14,13 @@
       "sensitive": true,
       "required": true,
       "type": "string"
+    },
+    "enable_auto_guardrails_hook": {
+      "title": "Auto-run guardrails check",
+      "description": "Nudge Claude to run the Sigrid guardrails check on changed files at the end of each turn.",
+      "required": false,
+      "type": "boolean",
+      "default": true
     }
   },
   "mcpServers": {
