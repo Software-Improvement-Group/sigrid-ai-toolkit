@@ -63,6 +63,17 @@ We regularly add improvements and new features. To ensure you get these updates 
 
 Claude Code will now automatically update the Sigrid plugin for you.
 
+### Troubleshooting: I did not get prompted for the Sigrid token
+
+This may happen due to a bug in at least Claude Code 2.1.84. Enter the token as follows:
+
+- `/plugin` to enter the plugin overview
+- Navigate to `Installed`
+- Navigate to `sigrid` and press enter to select
+- Navigate to `Configure options`
+- Enter your Sigrid token and press enter
+- `/reload-plugins` for changes to take effect
+
 ## Usage
 
 See the [Sigrid MCP documentation](https://docs.sigrid-says.com/integrations/integration-sigrid-mcp.html) for MCP usage. Each skill has its own `README.md` under [`sigrid/skills/`](sigrid/skills/).
