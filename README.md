@@ -17,6 +17,7 @@ The plugin auto-configures the Sigrid MCP server (guardrails + auto-fix data) an
 | `sigrid-diagnose` | Identifies your weakest maintainability property and surfaces high-leverage refactoring candidates |
 | `sigrid-improve` | Executes refactoring candidates with guardrail verification |
 | `sigrid-ci-feedback` | Runs Sigrid CI locally and returns structured quality feedback |
+| `architecture-drift` | Flags architecture drift introduced by an in-progress change, grounded in Sigrid's architecture graph |
 | `fix-osh-risk` | Remediates open source health findings — opens change requests or researched issues |
 
 ### Auto-run guardrails hook
@@ -61,17 +62,6 @@ We regularly add improvements and new features. To ensure you get these updates 
 - Navigate to `Enable auto-update` and press enter to enable
 
 Claude Code will now automatically update the Sigrid plugin for you.
-
-### Troubleshooting: I did not get prompted for the Sigrid token
-
-This may happen due to a bug in at least Claude Code 2.1.84. Enter the token as follows:
-
-- `/plugin` to enter the plugin overview
-- Navigate to `Installed`
-- Navigate to `sigrid` and press enter to select
-- Navigate to `Configure options`
-- Enter your Sigrid token and press enter
-- `/reload-plugins` for changes to take effect
 
 ## Usage
 
