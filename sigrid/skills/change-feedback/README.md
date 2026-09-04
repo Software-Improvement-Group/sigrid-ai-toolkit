@@ -1,14 +1,14 @@
-# Sigrid CI Feedback
+# Change Feedback
 
 > **Adapting this skill.** Configure it by running `/sigrid:setup` to set your customer, system, and conventions in the profile — these survive plugin updates. See SKILL.md for the full procedure.
 
-Runs Sigrid CI locally on the current working tree and returns structured quality feedback. Results are never published to Sigrid unless explicitly requested.
+Runs Sigrid CI locally on the current working tree and returns structured quality feedback. This is strictly feedback-only — nothing is ever published to Sigrid or visible on the dashboard.
 
 ## What it does
 
 1. Verifies prerequisites (token, Python, sigridci scripts, source root)
-2. Runs the Sigrid CI analysis locally
-3. Returns maintainability, security, or OSH feedback as markdown
+2. Runs the Sigrid CI analysis locally via `agents.py`
+3. Returns maintainability, security, or OSH feedback as structured JSON
 
 ## Prerequisites
 
@@ -21,5 +21,5 @@ Runs Sigrid CI locally on the current working tree and returns structured qualit
 ## Usage
 
 ```
-/sigrid:sigrid-ci-feedback for maintainability on customer "corp" and system "backend"
+/sigrid:change-feedback for maintainability on customer "corp" and system "backend"
 ```

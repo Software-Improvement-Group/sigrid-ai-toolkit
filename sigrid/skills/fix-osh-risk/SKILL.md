@@ -91,7 +91,7 @@ Only reached for risk types that can produce MRs (either via the fast-path bump 
 1. **Create a branch first** — do not modify any files until you have created a dedicated branch off the baseline branch (from the profile). Use the branch-naming convention from the profile; default to a short readable name like `fix/osh-commons-lang3` or `fix/osh-lodash` — don't include the full purl. This is a hard gate: no branch means no changes.
 2. Apply the version bump or fix using ecosystem-appropriate mechanics.
 3. Run tests if a test command is available.
-4. **Run Sigrid CI verification** (mandatory). Invoke the `sigrid-ci-feedback` skill on the working tree to run Sigrid CI in OSH mode. This is the only way to confirm the original finding is actually resolved — without it, the fix is unverified and must not be shipped as a change request. If the finding still appears: try an alternative version from the researcher's suggestions if one exists. If no alternatives remain, off-ramp to a ticket.
+4. **Run Sigrid CI verification** (mandatory). Invoke the `change-feedback` skill on the working tree to run Sigrid CI in OSH mode. This is the only way to confirm the original finding is actually resolved — without it, the fix is unverified and must not be shipped as a change request. If the finding still appears: try an alternative version from the researcher's suggestions if one exists. If no alternatives remain, off-ramp to a ticket.
 
 **When to off-ramp to a ticket instead:**
 - Changes become widespread (touching many files, large diff)

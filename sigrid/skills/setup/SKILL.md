@@ -70,6 +70,6 @@ is only a template (it too is replaced on update); never write user data there.
 
 - This skill only writes the profile. It never touches project code or calls the Sigrid MCP.
 - Never store the Sigrid API token in the profile. The MCP token is handled by plugin `userConfig`
-  and lives in the OS keychain. Note this keychain token is **not** visible to the `sigrid-ci-feedback`
+  and lives in the OS keychain. Note this keychain token is **not** visible to the `change-feedback`
   skill, which runs Sigrid CI as a local subprocess and reads a separate `SIGRID_CI_TOKEN` (or
   `SIGRID_TOKEN`) shell environment variable the user exports themselves.

@@ -40,5 +40,5 @@ Trigger phrases: "set up Sigrid", "configure Sigrid", "Sigrid onboarding", or
 ## Note
 
 This skill only writes the profile — it never touches project code, calls the Sigrid MCP, or stores
-your API token. (The MCP token lives in the OS keychain via plugin config; `sigrid-ci-feedback` uses a
+your API token. (The MCP token lives in the OS keychain via plugin config; `change-feedback` uses a
 separate `SIGRID_CI_TOKEN` environment variable.)

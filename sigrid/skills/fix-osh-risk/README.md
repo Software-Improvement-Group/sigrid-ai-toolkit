@@ -15,7 +15,7 @@ changes are too large, it creates a researched issue instead.
 - **A `~~git host` MCP** — any git-host MCP (GitLab, GitHub, …) for creating change requests and issues. The skill is
   forge-agnostic and does not ship a git-host server; connect the one your team uses. If none is connected, the skill
   stops rather than producing a local-only change.
-- **sigrid-ci-feedback skill** — for verifying fixes against Sigrid CI
+- **change-feedback skill** — for verifying fixes against Sigrid CI
 
 ### Recommended network allowlist
 
