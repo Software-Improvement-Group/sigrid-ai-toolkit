@@ -2,7 +2,8 @@
 
 This file is the **customization surface** for the Sigrid plugin. It captures your team's
 conventions so the skills (`sigrid-diagnose`, `sigrid-improve`, `fix-osh-risk`,
-`change-feedback`) produce guidance specific to you instead of generic output.
+`change-feedback`, `resolve-security-findings`) produce guidance specific to you instead of
+generic output.
 
 **This is a template.** The live copy that the skills read lives in the plugin's persistent data
 directory, exposed by Claude Code as `${CLAUDE_PLUGIN_DATA}`:
@@ -66,6 +67,13 @@ abstraction cannot cover.
 - **Required approvals / reviewers**: <e.g. 1 approval, CODEOWNERS, none>
 - **Open as draft?**: <yes | no>
 - **Labels / milestones that actually exist**: <list, or "none — do not set any">
+
+## Security findings triage
+
+Settings read by `resolve-security-findings`.
+
+- **Security model**: <e.g. `ow10`, `sigsec`, `pci4`, `owasvs4c` — the Sigrid security model to
+  query, or leave blank to use the customer's own default (OWASP Top-10)>
 
 ## Customizing behavior
 
