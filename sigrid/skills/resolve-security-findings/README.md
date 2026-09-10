@@ -2,15 +2,20 @@
 
 > **Adapting this skill.** Configure it by running `/sigrid:setup` to set your customer, system, and the "Security findings triage" settings (security model) in the profile. These survive plugin updates.
 
-Triages Sigrid security findings one by one: classifies each as false positive, accepted risk, or will-fix, writes the decision back to Sigrid, and fixes the code when warranted.
+Triages Sigrid security findings one by one: classifies each as false positive, accepted risk, needs-human-review, or will-fix, writes the decision back to Sigrid, and fixes the code when warranted.
 
 ## What it does
 
 1. Resolves a finding ID, a pasted finding, or a bulk backlog to work through
 2. Reads the flagged code and its context, then classifies it against an evidence gate — false
-   positive or accepted risk require a named file:line and reason, otherwise it defaults to will-fix
-3. Fixes will-fix findings in the working tree and checks the change with `guardrails_quality_check`
-4. Writes the classification and remark back to Sigrid via `update_finding_status`
+   positive or accepted risk require a named file:line and reason
+3. Routes findings it cannot fix mechanically — design decisions, remediation outside the working
+   tree, an unlocated sink — to needs-human-review instead of editing code; everything else defaults
+   to will-fix
+4. Writes the classification and remark back to Sigrid via `update_finding_status` before changing any
+   code
+5. Fixes will-fix findings in the working tree, checks the change with `guardrails_quality_check`,
+   promotes them to `FIXED` once committed, then reports anything left for a human in chat
 
 ## Prerequisites
 
@@ -29,4 +34,6 @@ Triages Sigrid security findings one by one: classifies each as false positive, 
 ```
 
 Default is **interactive** — it proposes classifications and asks before writing or committing.
-**Autonomous** mode only runs when explicitly requested — it writes and commits without blocking.
+**Autonomous** mode only runs when explicitly requested — it writes and commits without blocking, after
+an up-front warning about reachability facts, accepted risks needing a later human check, and the
+optional severity ceiling for suppression.
