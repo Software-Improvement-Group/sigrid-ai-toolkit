@@ -2,7 +2,8 @@
 
 This file is the **customization surface** for the Sigrid plugin. It captures your team's
 conventions so the skills (`sigrid-diagnose`, `sigrid-improve`, `fix-osh-risk`,
-`change-feedback`, `resolve-security-findings`) produce guidance specific to you instead of
+`change-feedback`, `architecture-drift`, `explore-codebase`,
+`resolve-security-findings`) produce guidance specific to you instead of
 generic output.
 
 **This is a template.** The live copy that the skills read lives in the plugin's persistent data
