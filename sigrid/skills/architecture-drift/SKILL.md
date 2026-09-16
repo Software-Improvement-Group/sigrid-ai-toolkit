@@ -54,36 +54,31 @@ signal.**
   dependency structure from reading code — the differentiator is Sigrid's measured
   graph.
 
-## Step 1 — Read the Diff
+## Step 1 — Spin Up the Check
 
-Read the added lines (`git diff`) to find new imports, calls, instantiations, and type references that
-may cross into another directory or module — this applies at any level, from sibling files up to whole subsystems.
+Default diff scope is the profile's **Baseline branch** (`<baseline>...HEAD`); use
+unstaged or staged instead if the user specifically means that, or there's no branch
+divergence.
 
-## Step 2 — Ground: Current Dependency Structure
+Use a Sonnet subagent, with the customer, system, and diff scope, to do the following:
 
-To get the current structure, call:
+1. Diff per the given scope. Read the added lines for new imports, calls,
+   instantiations, and type references crossing into another directory or module, at
+   any granularity from sibling files to whole subsystems. No diff, or no
+   cross-directory references found → stop and say so; don't spend MCP calls on a
+   change that can't drift.
+2. Ground each candidate against the current structure via
+   `architecture:get_external_dependencies(customer, system, path=<touched file or
+   its common parent directory>, direction="all")` — one call per distinct group,
+   capped at ~5 top-level directories (prioritize the groups with the most touched
+   files or new references; report which directories were skipped).
+3. Cross-reference: does an edge already exist between these two directories, in
+   which direction, through which files?
+4. Report each reference as **Clean** (matching edge and files) or **Drift**
+   (file:line, the graph edge/cycle/gateway violated, and the specific existing
+   file(s) it should route through instead).
 
-```
-architecture:get_external_dependencies(customer, system,
-    path=<one touched file path or its common parent directory>, direction="all")
-```
+## Step 2 — Relay
 
-`path` takes a single string prefix, not a list. If several files in the same
-group changed, call once per file, or once on their common parent directory if
-they share one — either way you get edges to/from exactly the files that changed.
-One call per distinct group.
-
-**Constraint: maximum of ~5 distinct top-level directories** - the diff itself may be too broad for one pass.
-Prioritize the groups with the most touched files or the most new external
-references found in Step 1, run the check on those, and explicitly report which
-directories were skipped so the user can rerun the skill scoped to them.
-
-## Step 3 — Cross-Reference: Is This Reference Consistent With the Architecture Graph?
-
-For each new reference found in the diff, check it against the *current* measured structure:
-does an edge already exist between these two directories? In which direction? Through which files?
-
-## Step 4 — Output
-
-Report whether something needs to change.
-If yes, indicate what and why. If not, state it clearly to the user.
+Relay the subagent's report to the user as-is, including any skipped directories so
+they can rerun scoped to them.
