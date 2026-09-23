@@ -23,7 +23,9 @@ Use this before committing or opening a PR, or when reviewing someone else's
 branch for architecture risk before merging.
 
 - **The diff is the source of truth for what's new.**
-- **The Sigrid architecture graph is the source of truth for what already exists.**
+- **The Sigrid architecture graph is the source of truth for what already exists.** It
+  describes the baseline branch as Sigrid last analysed it, never the working tree, which is
+  exactly what makes it the before-picture for the diff.
 
 A new reference that matches an edge that already exists is normal evolution —
 nothing to flag.

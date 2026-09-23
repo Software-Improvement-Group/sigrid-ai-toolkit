@@ -17,6 +17,8 @@ The plugin auto-configures the Sigrid MCP server (guardrails + auto-fix data) an
 | `sigrid-diagnose` | Identifies your weakest maintainability property and surfaces high-leverage refactoring candidates |
 | `sigrid-improve` | Executes refactoring candidates with guardrail verification |
 | `change-feedback` | Runs Sigrid CI locally and returns structured quality feedback |
+| `architecture-diagnose` | Finds the directory whose structure is most worth fixing and names the concrete fix |
+| `architecture-improve` | Implements the fix `architecture-diagnose` named |
 | `architecture-drift` | Flags architecture drift introduced by an in-progress change, grounded in Sigrid's architecture graph |
 | `fix-osh-risk` | Remediates open source health findings — opens change requests or researched issues |
 | `resolve-security-findings` | Triages and/or fixes security findings |

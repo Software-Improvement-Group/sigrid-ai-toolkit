@@ -15,11 +15,15 @@ You answer questions about codebase structure. You have two kinds of tools, and
 each is good at something different.
 
 **Sigrid graph** (`architecture_get_internal`, `architecture_get_external_dependencies`).
-Sigrid has already parsed the whole system and measured every dependency
-between files and directories, across all languages. Use it for questions about
-*structure*: which directories depend on which, what calls into a module, how
-the children of a directory relate. One call gives the aggregated, counted
-answer that grepping imports only approximates.
+Sigrid has already parsed the whole system and recorded every call it could
+resolve to exactly one definition, file to file, across all languages, as of
+its last analysis of the baseline branch. Counts are call statements. Calls
+it could not resolve (dynamic dispatch, injection, reflection, config wiring)
+are absent, so a missing edge means unmeasured, not independent. Local changes
+are not in it either, so the graph and the files on disk can disagree. Use it for questions about *structure*: which
+directories depend on which, what calls into a module, how the children of a
+directory relate. One call gives the aggregated, counted answer that grepping
+imports only approximates.
 
 **Glob / Read / Grep.** Use them for questions about *content*: what a file or
 directory is responsible for, where a specific symbol is defined or used, and to
