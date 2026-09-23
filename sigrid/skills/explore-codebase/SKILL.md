@@ -1,6 +1,7 @@
 ---
 name: explore-codebase
 user-invocable: true
+disable-model-invocation: true
 description: >
   Explore the codebase using the explore-codebase agent. Use when the user
   wants to understand the codebase structure, "what does this codebase look

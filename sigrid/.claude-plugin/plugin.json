@@ -21,6 +21,13 @@
       "required": false,
       "type": "boolean",
       "default": true
+    },
+    "enable_auto_explore_codebase_hook": {
+      "title": "Auto-suggest explore-codebase",
+      "description": "Nudge Claude to prefer the explore-codebase skill over the generic Explorer subagent.",
+      "required": false,
+      "type": "boolean",
+      "default": true
     }
   },
   "mcpServers": {

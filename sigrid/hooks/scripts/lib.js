@@ -8,6 +8,10 @@ function hooksEnabled() {
   return process.env.CLAUDE_PLUGIN_OPTION_ENABLE_AUTO_GUARDRAILS_HOOK !== "false";
 }
 
+function exploreCodebaseHookEnabled() {
+  return process.env.CLAUDE_PLUGIN_OPTION_ENABLE_AUTO_EXPLORE_CODEBASE_HOOK !== "false";
+}
+
 function isRelevantFile(filePath) {
   if (!filePath) return false;
   if (!SUPPORTED_EXT_REGEX.test(filePath)) return false;
@@ -39,4 +43,11 @@ function writeStdout(obj) {
   fs.writeSync(1, JSON.stringify(obj) + "\n");
 }
 
-module.exports = { hooksEnabled, isRelevantFile, markerPath, readStdin, writeStdout };
+module.exports = {
+  hooksEnabled,
+  exploreCodebaseHookEnabled,
+  isRelevantFile,
+  markerPath,
+  readStdin,
+  writeStdout,
+};
