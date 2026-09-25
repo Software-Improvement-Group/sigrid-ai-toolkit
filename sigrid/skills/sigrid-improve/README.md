@@ -13,7 +13,7 @@ Executes refactoring candidates identified by Sigrid. Works in two modes: autono
 
 ## Prerequisites
 
-- Sigrid MCP plugin (`code_quality_guardrails`)
+- Sigrid MCP plugin (`guardrails_quality_check`)
 - Sigrid customer and system name in the profile (`/sigrid:setup`)
 - Run `sigrid-diagnose` first, or let this skill trigger it
 

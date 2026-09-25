@@ -17,7 +17,7 @@ This skill is diagnosis only — it does not make code changes. Use `sigrid-impr
 
 ## Prerequisites
 
-- Sigrid MCP plugin (`maintainability_ratings`, `refactoring_candidates`)
+- Sigrid MCP plugin (`maintainability_get_ratings`, `maintainability_get_findings`)
 - Sigrid customer and system name in the profile (`/sigrid:setup`)
 
 ## Usage

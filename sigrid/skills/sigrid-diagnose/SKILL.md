@@ -1,13 +1,13 @@
 ---
 name: sigrid-diagnose
 user-invocable: true
-disable-model-invocation: false
 description: >
   Finds the highest-leverage maintainability problem in a Sigrid system — the property most worth
   fixing and the concrete candidates that drive it — or reports that nothing qualifies. Diagnoses
-  first and asks before changing anything. Use for "why is our maintainability rating low", "where
-  should we improve code quality", "diagnose maintainability of <system>". For architecture-level
-  structure (coupling, cohesion, component boundaries), use architecture-diagnose instead.
+  only; code changes are handed off to sigrid-improve. Use for "why is our maintainability rating
+  low", "where should we improve code quality", "diagnose maintainability of <system>". For
+  architecture-level structure (coupling, cohesion, component boundaries), use
+  architecture-diagnose instead.
 ---
 
 # Sigrid Diagnose
@@ -32,24 +32,17 @@ high-leverage candidates.
   run by asking or stated inline (customer/system, baseline branch, or any other), write it back
   into the profile additively (keyed by the current repo's remote where system-specific) so future
   runs resolve without asking.
-- The Sigrid MCP plugin is available: `refactoring_candidates`, `maintainability_ratings`,
-  `code_quality_guardrails`. Tools describe Sigrid's last baseline analysis, never the working
-  tree.
+- The Sigrid MCP tools `maintainability_get_ratings` and `maintainability_get_findings` are
+  available. They describe Sigrid's last baseline analysis, never the working tree.
 
 ### Tool gotchas
 
-- `maintainability_get_findings` with `count=100` on a large system (thousands of LOC) can exceed
-  the tool-output token limit — the result silently gets written to a scratch file instead of
-  returned inline, and you must read it back in chunks. If a property has very few candidates
-  (e.g. `componentEntanglement`, `moduleCoupling` on a small system) this does not happen. Do not
-  assume `count=100` always returns inline; check for the truncation notice.
+- `maintainability_get_findings` with `count=100` on a large system can exceed the tool-output
+  token limit — the result silently gets written to a scratch file instead of returned inline, and
+  you must read it back in chunks. Check for the truncation notice rather than assuming the result
+  is inline.
 - `status` on each candidate can be `RAW`, `WILL_FIX`, or `ACCEPTED`. `ACCEPTED` means the team has
-  already triaged and deprioritized it — exclude these from the action plan (see reject rules)
-  rather than re-surfacing a decision that was already made.
-- Ratings and findings are two separate calls; a property's star rating does not tell you how many
-  candidates exist or how findings distribute across severity tiers. Always pull findings even for
-  properties you don't expect to report on, since the cross-reference step (below) needs all of
-  them.
+  already triaged and deprioritized it — exclude these (see reject rules).
 
 ## How to think about maintainability
 
@@ -72,17 +65,16 @@ split so each half weighs less). Both are legitimate; pick whichever the code st
 
 ## How to determine which refactoring candidates have the most impact
 
-### 1. Retrieve maintainability ratings from Sigrid MCP
+### 1. Retrieve maintainability ratings
 
-Use `maintainability_ratings`. Parse the result: unitSize, unitComplexity, unitInterfacing,
+Use `maintainability_get_ratings`. Parse the result: unitSize, unitComplexity, unitInterfacing,
 duplication, moduleCoupling, componentIndependence, componentEntanglement — each 0.5–5.5 stars.
 Sort worst-first and compute the gap to 4.0 for each.
 
 ### 2. Get refactoring candidates for ALL properties
 
-Retrieve top 100 candidates for every property in parallel (see tool gotchas above for the
-truncation caveat). Do not limit to the weakest property only — cross-referencing across all
-properties is essential (see step 3).
+Call `maintainability_get_findings` with `count=100` for every property in parallel. Do not limit
+to the weakest property only — cross-referencing across all properties is essential (see step 3).
 
 ### 3. Choose the most impactful refactoring candidates
 
@@ -92,59 +84,44 @@ A finding that appears in multiple property lists is a higher-leverage target th
 affects only a single metric. For each candidate, note which properties it contributes to.
 Prioritise findings that show up in 2+ lists.
 
-#### 3b. Analyse the system-level risk distribution
+#### 3b. General considerations
 
-For each property, look at the severity distribution of the top-100 results (count of VERY_HIGH /
-HIGH / MEDIUM findings and their aggregate weight). Do not assume VERY_HIGH findings dominate —
-state explicitly which tier drives the score for each property.
-
-#### 3c. General considerations
-
-- Prefer internal types and non-public interfaces where the blast radius is contained.
-- Does the pattern across candidates point to a structural problem (a whole cluster of similar
-  files), or is it diffuse (see "How to think about maintainability")?
+- Is the pattern a concentrated cluster or a diffuse spread (see "How to think about
+  maintainability")? A single finding does not move a system rating much.
 - Judge candidates against best practices for that language.
-- Resolving a single finding does not move a system rating much — look for clusters.
 
-| Property | Fixability |
-|---|---|
-| `unitInterfacing` | High |
-| `unitSize` | High |
-| `unitComplexity` | Medium |
-| `duplication` | Medium |
-| `moduleCoupling` | Low |
-| `componentIndependence` | Low |
-| `componentEntanglement` | Low |
+`componentIndependence` and `componentEntanglement` are component-level and `sigrid-improve` does
+not change them. Only pick one when no other property has a qualifying candidate; then present it
+as a suggestion and point to `/sigrid:architecture-diagnose`, which has the graph tools to diagnose
+it properly.
 
-`refactoring_candidates` results are already sorted by LOC-weighted contribution, so the first
-results per property are the highest-impact ones for that property.
+`maintainability_get_findings` results are already sorted by LOC-weighted contribution, so the
+first results per property are the highest-impact ones for that property.
 
-### 3d. Targets and reject rules
+### 3c. Targets and reject rules
 
 - A property only qualifies for the action plan if its gap to 4.0 is meaningful. Do not build a
   plan around a property that is within ~0.1 stars of 4.0 with no concentrated cluster behind it —
   say it's not worth chasing right now instead of forcing a finding.
 - Reject a candidate, and say which rule applied, when it is:
   - generated, vendored, or test code;
-  - status `ACCEPTED` (already triaged and deprioritized — re-surfacing it wastes a decision
-    already made; `WILL_FIX` may still be worth including since it's queued but not yet acted on);
+  - status `ACCEPTED` (already triaged and deprioritized; `WILL_FIX` may still be included);
   - only fixable by a change that would visibly worsen a different property or file (e.g. splitting
     a unit in a way that increases duplication elsewhere) — note the trade-off instead of silently
     picking a side;
-  - a public API endpoint or a serialized type with public field names, where the fix is a
-    breaking-change signature/field rename — flag it for `sigrid-improve` to handle via
-    compatibility-preserving techniques rather than rejecting outright, since these often still
-    have contained, non-breaking fixes (e.g. extracting a builder without renaming wire fields).
+  - only fixable by changing an external interface: a public API signature, a serialized field
+    name, or another wire contract that callers outside the repo depend on. A public unit whose fix
+    stays internal (e.g. splitting a long endpoint body) still qualifies.
 - If, after reject rules, no candidate survives for the weakest property, fall back to the
-  next-weakest property that still has a qualifying candidate. If none of the seven properties has
-  a qualifying candidate, say so plainly (see Output) and stop — do not force a plan.
+  next-weakest property that still has a qualifying candidate. If none has, say so plainly (see
+  Output) and stop — do not force a plan.
 
 ## Verification
 
 Before finalizing the action plan: for each candidate you intend to report, confirm you actually
-read the file (or, for architecture-level properties without a single file, the component names)
-and that the LOC/severity/status fields you're citing came from the tool response, not inferred.
-If a flagged file no longer exists at that path (renamed, moved, deleted since the last Sigrid
+read the file (or, for component-level properties without a single file, the component names)
+and that the LOC/status fields you're citing came from the tool response, not inferred. If a
+flagged file no longer exists at that path (renamed, moved, deleted since the last Sigrid
 snapshot), say so and drop it rather than reporting stale data as current.
 
 ## Output
@@ -153,7 +130,7 @@ State findings as problem/solution pairs, ELI5, in a few sentences each: what is
 fix looks like. Talk about the code, not the tools or metrics used to find it — someone who works
 in the repo should think "yes, I recognize that." Ground every claim in something read from the
 actual file (see Verification); never describe a hotspot using only metric language (property
-names, star ratings, severity tiers) with no concrete detail.
+names, star ratings, severity) with no concrete detail.
 
 One primary finding, with runner-ups if any survive the reject rules. Structure:
 
@@ -190,11 +167,17 @@ Otherwise, ask (`AskUserQuestion`) whether to: implement it now, implement it in
 write a handover doc for another agent, or just talk it through first.
 
 For every option except "talk", write a handover doc to `.sigrid/maintainability-handover.md`
-first: primary finding + runner-ups exactly as presented, the candidate IDs and file paths, and the
-reject-rule notes — this is the brief `sigrid-improve` should work from, since chat history is not
-a reliable handoff. Then:
+first — this is the brief `sigrid-improve` works from, since chat history is not a reliable
+handoff. It contains:
+
+- Sigrid customer and system, and today's date;
+- primary finding + runner-ups exactly as presented, with candidate IDs and file paths;
+- the rejected candidates and the rule that removed each.
+
+It is a working file: do not commit it. Then:
 
 - **fresh session** (recommend when this run was long): tell the user to `/clear` and run
   `/sigrid:sigrid-improve`; it finds the handover in `.sigrid/` by itself.
+- **handover for another agent**: give the path and stop.
 - **now**: invoke `sigrid-improve` with the candidates just diagnosed. Say in one line that the
   diagnose context stays in the window.
