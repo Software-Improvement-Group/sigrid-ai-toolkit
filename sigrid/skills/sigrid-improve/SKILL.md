@@ -35,21 +35,25 @@ Executes refactoring candidates identified by Sigrid. Two modes: autonomous (run
 
 ### Step 1 — Establish context
 
-If invoked right after `/sigrid:sigrid-diagnose`, reuse its output: you already know the weakest property and the top candidates. If no diagnosis is in context, run `/sigrid:sigrid-diagnose` first.
+If invoked right after `/sigrid:sigrid-diagnose` in the same session, reuse its output directly: you already know the primary finding, any runner-ups, and the rejected candidates (do not re-propose a candidate sigrid-diagnose already rejected — treat its reject-rule notes as binding).
+
+If no diagnosis is in context (fresh session), look for a handover doc at `.sigrid/maintainability-handover.md`. If present, read it — it contains the primary finding, runner-ups, candidate IDs/file paths, and reject-rule notes exactly as sigrid-diagnose presented them. Treat it as authoritative and do not re-derive or second-guess its reject decisions.
+
+If neither is available, run `/sigrid:sigrid-diagnose` first.
 
 ### Step 2 — Ask for mode (if not already provided)
 
 Present the two options concisely:
 
     Two modes available:
-      autonomous  — executes all top candidates from sigrid-diagnose, you review diffs at the end
+      autonomous  — executes the primary finding and any runner-ups from sigrid-diagnose, you review diffs at the end
       interactive — together we decide what to tackle and in what order, I'll ask for context where needed
 
     Which mode? [autonomous / interactive]
 
-**Autonomous mode:** use the candidate list from sigrid-diagnose output and proceed without further approval. Never block — see decision-point table above.
+**Autonomous mode:** use the primary finding plus runner-ups from sigrid-diagnose's output (skip anything it listed under "Rejected candidates") and proceed without further approval. Never block — see decision-point table above.
 
-**Interactive mode:** present the candidate list with a brief rationale for each (property, LOC at risk, and whether it is a simple extraction or a cross-cutting concern). Ask the developer which to prioritise and whether to skip any. For each candidate, ask for missing context before starting. After each change, show the diff and ask `Continue to next candidate? [yes / skip / stop]` before proceeding.
+**Interactive mode:** present the primary finding and runner-ups with a brief rationale for each (property, LOC at risk, and whether it is a simple extraction or a cross-cutting concern). Ask the developer which to prioritise and whether to skip any. For each candidate, ask for missing context before starting. After each change, show the diff and ask `Continue to next candidate? [yes / skip / stop]` before proceeding.
 
 ### Step 3 — For each candidate, execute the refactoring
 
@@ -131,4 +135,5 @@ When a function or type signature changes, update all call sites in the same cha
 - `code_quality_guardrails` tool unavailable or returns an error: note the failure, treat guardrails as unknown (⚠ unverified) in the report, continue — do not block on a tool outage.
 - Call sites in generated or external code that cannot be updated: note which call sites were left unchanged and warn that the refactoring may require a manual follow-up.
 - Empty candidate list from sigrid-diagnose: report "No candidates found — nothing to do" and stop.
+- `.sigrid/maintainability-handover.md` missing, unreadable, or from a different customer/system than the current profile: do not guess its contents — run `/sigrid:sigrid-diagnose` first instead.
 - Candidate is architecture-level: see Invariants above.
