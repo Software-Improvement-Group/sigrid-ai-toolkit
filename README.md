@@ -1,7 +1,7 @@
 # Sigrid AI Toolkit
 
 > [!WARNING]
-> **Deprecated:** this marketplace has moved to [agent-integrations](https://github.com/Software-Improvement-Group/agent-integrations#readme). Follow the install steps there.
+> **Deprecated:** this marketplace has moved to [agent-integrations](https://github.com/Software-Improvement-Group/agent-integrations#upgrading-from-the-sigrid-plugin). Follow the upgrade steps there.
 
 A Claude Code plugin marketplace for Sigrid integrations ([documentation](https://docs.sigrid-says.com/integrations/integration-sigrid-mcp.html)).
 
