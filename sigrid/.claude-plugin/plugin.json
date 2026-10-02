@@ -1,6 +1,6 @@
 {
   "name": "sigrid",
-  "description": "Prevent and fix technical debt with Sigrid: guardrails against new issues, and skills to diagnose and auto-fix existing ones.",
+  "description": "DEPRECATED: moved to Software-Improvement-Group/agent-integrations. Prevent and fix technical debt with Sigrid: guardrails against new issues, and skills to diagnose and auto-fix existing ones.",
   "author": {
     "name": "Software Improvement Group"
   },
